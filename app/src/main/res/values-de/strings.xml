@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="share_url">URL teilen</string>
+    <string name="action_close">Beenden</string>
+    <string name="action_reload">Neu laden</string>
+    <string name="action_home">Start</string>
+    <string name="action_pin">Verknüpfung</string>
+    <string name="action_share">Teilen</string>
+</resources>
