@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="share_url">URL teilen</string>
-    <string name="action_close">Beenden</string>
-    <string name="action_reload">Neu laden</string>
-    <string name="action_home">Start</string>
+    <string name="close_button">Beenden</string>
     <string name="action_pin">Verknüpfung</string>
+    <string name="action_load_url">URL laden</string>
+    <string name="action_load_url_message">Domain-Namen eingeben</string>
+    <string name="action_load_url_hint">z.B. \"google.com\"</string>
+    <string name="action_home">Start</string>
+    <string name="action_reload">Neu laden</string>
     <string name="action_share">Teilen</string>
+    <string name="action_share_title">URL teilen</string>
+    <string name="confirm">@android:string/ok</string>
+    <string name="cancel">@android:string/cancel</string>
 </resources>

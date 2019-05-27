@@ -2,6 +2,7 @@ package de.badener.links;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ShortcutInfo;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -17,14 +19,20 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,21 +68,57 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
 
+        // Handle close button in the top bar
+        final ImageButton closeButton = findViewById(R.id.closeButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         // Handle the bottom navigation bar
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_close:
-                        finish();
-                        break;
-                    case R.id.action_reload:
-                        webView.reload();
-                        break;
                     case R.id.action_home:
                         if (!webView.getUrl().equals(startPage)) {
                             webView.loadUrl(startPage);
                         }
+                        break;
+                    case R.id.action_reload:
+                        webView.reload();
+                        break;
+                    case R.id.action_load_url:
+                        final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
+                        final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
+                        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0,
+                                getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
+                        textInputLayout.setHint(getString(R.string.action_load_url_hint));
+                        textInput.setSingleLine(true);
+                        textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                        textInputLayout.addView(textInput);
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle(R.string.action_load_url)
+                                .setMessage(R.string.action_load_url_message)
+                                .setView(textInputLayout)
+                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                    public void onClick(final DialogInterface dialog, int whichButton) {
+                                        if (Objects.requireNonNull(textInput.getText()).toString().isEmpty()) {
+                                            dialog.dismiss();
+                                        } else {
+                                            String url = "http://" + textInput.getText().toString();
+                                            webView.loadUrl(url);
+                                        }
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
                         break;
                     case R.id.action_pin:
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -106,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent share = new Intent(Intent.ACTION_SEND);
                         share.setType("text/plain");
                         share.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
-                        startActivity(Intent.createChooser(share, getString(R.string.share_url)));
+                        startActivity(Intent.createChooser(share, getString(R.string.action_share_title)));
                         break;
                 }
                 return false;

@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_close"
+        android:id="@+id/action_pin"
         android:enabled="true"
-        android:icon="@drawable/ic_close_outline"
-        android:title="@string/action_close"
+        android:icon="@drawable/ic_pin_outline"
+        android:title="@string/action_pin"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_reload"
+        android:id="@+id/action_load_url"
         android:enabled="true"
-        android:icon="@drawable/ic_reload"
-        android:title="@string/action_reload"
+        android:icon="@drawable/ic_insert_link"
+        android:title="@string/action_load_url"
         app:showAsAction="ifRoom" />
 
     <item
@@ -24,10 +24,10 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_pin"
+        android:id="@+id/action_reload"
         android:enabled="true"
-        android:icon="@drawable/ic_pin_outline"
-        android:title="@string/action_pin"
+        android:icon="@drawable/ic_reload"
+        android:title="@string/action_reload"
         app:showAsAction="ifRoom" />
 
     <item

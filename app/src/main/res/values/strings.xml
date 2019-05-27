@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Links</string>
-    <string name="share_url">Share URL</string>
-    <string name="action_close">Exit</string>
-    <string name="action_reload">Reload</string>
-    <string name="action_home">Home</string>
+    <string name="close_button">Exit</string>
     <string name="action_pin">Shortcut</string>
+    <string name="action_load_url">Load URL</string>
+    <string name="action_load_url_message">Enter domain name</string>
+    <string name="action_load_url_hint">e.g. \"google.com\"</string>
+    <string name="action_home">Home</string>
+    <string name="action_reload">Reload</string>
     <string name="action_share">Share</string>
+    <string name="action_share_title">Share URL</string>
+    <string name="confirm">@android:string/ok</string>
+    <string name="cancel">@android:string/cancel</string>
 </resources>
