@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_home_outline"
+        android:title="@string/action_home"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_pin"
         android:enabled="true"
         android:icon="@drawable/ic_pin_outline"
@@ -14,13 +21,6 @@
         android:enabled="true"
         android:icon="@drawable/ic_insert_link"
         android:title="@string/action_load_url"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_home"
-        android:enabled="true"
-        android:icon="@drawable/ic_home_outline"
-        android:title="@string/action_home"
         app:showAsAction="ifRoom" />
 
     <item
