@@ -1,7 +1,6 @@
 package de.badener.links;
 
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -122,26 +121,26 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_pin:
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                            Intent addToHome = new Intent(MainActivity.this, MainActivity.class);
-                            addToHome.setData(Uri.parse(webView.getUrl()));
-                            addToHome.setAction(Intent.ACTION_MAIN);
+                            Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
+                            pinShortcut.setData(Uri.parse(webView.getUrl()));
+                            pinShortcut.setAction(Intent.ACTION_MAIN);
                             getLauncherIcon();
                             String title = webView.getTitle();
                             ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
                                     .setShortLabel(title)
                                     .setIcon(launcherIcon)
-                                    .setIntent(addToHome)
+                                    .setIntent(pinShortcut)
                                     .build();
                             getSystemService(ShortcutManager.class).requestPinShortcut(shortcutInfo, null);
                         } else {
-                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                            intent.setData(Uri.parse(webView.getUrl()));
-                            intent.setAction(Intent.ACTION_MAIN);
+                            Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
+                            pinShortcut.setData(Uri.parse(webView.getUrl()));
+                            pinShortcut.setAction(Intent.ACTION_MAIN);
                             getLauncherIcon();
                             Intent addIntent = new Intent();
                             addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, webView.getTitle());
                             addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, launcherIcon);
-                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intent);
+                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, pinShortcut);
                             addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
                             sendBroadcast(addIntent);
                         }
@@ -217,17 +216,12 @@ public class MainActivity extends AppCompatActivity {
                 textViewURL.setText(webView.getUrl());
             }
 
-            // Handle some external links
+            // Handle external links
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                if (url.startsWith("mailto:") || url.startsWith("tel:") || url.startsWith("sms:")
-                        || url.startsWith("whatsapp:") || url.contains("play.google.com")) {
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
-                    } catch (ActivityNotFoundException ignored) {
-                    }
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getUrl().toString()));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
                     return true;
                 } else {
                     return false;
