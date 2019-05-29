@@ -86,30 +86,21 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
 
-                    case R.id.action_home:
-                        if (!webView.getUrl().equals(startPage)) {
-                            webView.loadUrl(startPage);
-                        }
-                        break;
-
                     case R.id.action_reload:
                         webView.reload();
                         break;
 
-                    case R.id.action_load_url:
+                    case R.id.action_search:
                         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
                         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
-                        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0,
-                                getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
-                        textInputLayout.setHint(getString(R.string.action_load_url_hint));
+                        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
                         textInput.setSingleLine(true);
                         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
                         textInput.setText(webView.getUrl());
                         textInput.setSelectAllOnFocus(true);
                         textInputLayout.addView(textInput);
                         new AlertDialog.Builder(MainActivity.this)
-                                .setTitle(R.string.action_load_url)
-                                .setMessage(R.string.action_load_url_message)
+                                .setMessage(R.string.action_search_message)
                                 .setView(textInputLayout)
                                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                     public void onClick(final DialogInterface dialog, int whichButton) {
@@ -120,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
                                             String url;
                                             if (text.startsWith("https://") || text.startsWith("http://")) {
                                                 url = text;
+                                            } else if (text.contains(" ") || !text.contains(".")) {
+                                                url = "https://www.google.com/search?q=" + text;
                                             } else {
                                                 url = "https://" + text;
                                             }

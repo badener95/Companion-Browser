@@ -55,7 +55,7 @@
             android:layout_height="2dp"
             android:layout_gravity="bottom"
             android:progress="50"
-            android:progressBackgroundTint="@color/colorPrimary"
+            android:progressBackgroundTint="@color/colorPrimaryLight"
             android:progressBackgroundTintMode="src_over"
             android:progressTint="@color/colorAccent"
             android:progressTintMode="src_over" />
