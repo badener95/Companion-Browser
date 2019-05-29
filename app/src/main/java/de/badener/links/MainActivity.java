@@ -20,7 +20,6 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -35,7 +34,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RelativeLayout topBarContainer;
+    private FrameLayout topBarContainer;
     private AppCompatTextView textViewURL;
     private ProgressBar progressBar;
     private WebView webView;
@@ -81,14 +80,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+
                     case R.id.action_home:
                         if (!webView.getUrl().equals(startPage)) {
                             webView.loadUrl(startPage);
                         }
                         break;
+
                     case R.id.action_reload:
                         webView.reload();
                         break;
+
                     case R.id.action_load_url:
                         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
                         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
@@ -97,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                         textInputLayout.setHint(getString(R.string.action_load_url_hint));
                         textInput.setSingleLine(true);
                         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                        textInput.setText(webView.getUrl());
+                        textInput.setSelectAllOnFocus(true);
                         textInputLayout.addView(textInput);
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle(R.string.action_load_url)
@@ -104,10 +108,16 @@ public class MainActivity extends AppCompatActivity {
                                 .setView(textInputLayout)
                                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                     public void onClick(final DialogInterface dialog, int whichButton) {
-                                        if (Objects.requireNonNull(textInput.getText()).toString().isEmpty()) {
+                                        String text = Objects.requireNonNull(textInput.getText()).toString();
+                                        if (text.isEmpty() || text.equals(webView.getUrl())) {
                                             dialog.dismiss();
                                         } else {
-                                            String url = "http://" + textInput.getText().toString();
+                                            String url;
+                                            if (text.startsWith("https://") || text.startsWith("http://")) {
+                                                url = text;
+                                            } else {
+                                                url = "https://" + text;
+                                            }
                                             webView.loadUrl(url);
                                         }
                                     }
@@ -119,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                                 })
                                 .show();
                         break;
+
                     case R.id.action_pin:
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                             Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
@@ -145,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                             sendBroadcast(addIntent);
                         }
                         break;
+
                     case R.id.action_share:
                         Intent share = new Intent(Intent.ACTION_SEND);
                         share.setType("text/plain");

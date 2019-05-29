@@ -4,8 +4,8 @@
     <string name="action_home">Start</string>
     <string name="action_pin">Verknüpfung</string>
     <string name="action_load_url">URL laden</string>
-    <string name="action_load_url_message">Domain-Namen eingeben</string>
-    <string name="action_load_url_hint">z.B. \"google.com\"</string>
+    <string name="action_load_url_message">Domain-Namen oder URL eingeben</string>
+    <string name="action_load_url_hint">z.B. \"example.com\"</string>
     <string name="action_reload">Neu laden</string>
     <string name="action_share">Teilen</string>
     <string name="action_share_title">URL teilen</string>
