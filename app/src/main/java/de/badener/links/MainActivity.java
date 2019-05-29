@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -30,7 +31,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import de.badener.links.utils.AdBlocker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -183,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         // Load either the start page (Google in this case) or the URL provided by an intent
         webView.loadUrl(url);
 
+        AdBlocker.init(MainActivity.this);
+
         webView.setWebChromeClient(new WebChromeClient() {
 
             // Update the progress bar
@@ -238,6 +245,23 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     return false;
                 }
+            }
+
+            // Ad blocker based on this:
+            // https://github.com/CarbonROM/android_packages_apps_Quarks/commit/a9abee9694c8dd239cda403bd99ea9e0922b90b5
+            private final Map<String, Boolean> loadedUrls = new HashMap<>();
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                boolean ad;
+                String url = request.getUrl().toString();
+                if (!loadedUrls.containsKey(url)) {
+                    ad = AdBlocker.isAd(url);
+                    loadedUrls.put(url, ad);
+                } else {
+                    ad = loadedUrls.get(url);
+                }
+                return ad ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, request);
             }
         });
     }
