@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         textInput.setText(webView.getUrl());
         textInput.setSelectAllOnFocus(true);
-        textInput.setHint(R.string.action_search_message);
+        textInputLayout.addView(textInput);
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage(R.string.action_search_message)
                 .setView(textInputLayout)
