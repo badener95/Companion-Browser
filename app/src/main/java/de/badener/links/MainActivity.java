@@ -33,7 +33,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import de.badener.links.utils.AdBlocker;
 
@@ -81,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Handle clicks on the top bar
+        textViewURL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchURL();
+            }
+        });
+
         // Handle the bottom navigation bar
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -104,41 +111,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.action_search:
-                        final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
-                        final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
-                        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
-                        textInput.setSingleLine(true);
-                        textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-                        textInput.setText(webView.getUrl());
-                        textInput.setSelectAllOnFocus(true);
-                        textInputLayout.addView(textInput);
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setMessage(R.string.action_search_message)
-                                .setView(textInputLayout)
-                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                    public void onClick(final DialogInterface dialog, int whichButton) {
-                                        String text = Objects.requireNonNull(textInput.getText()).toString();
-                                        if (text.isEmpty() || text.equals(webView.getUrl())) {
-                                            dialog.dismiss();
-                                        } else {
-                                            String url;
-                                            if (text.startsWith("https://") || text.startsWith("http://")) {
-                                                url = text;
-                                            } else if (text.contains(" ") || !text.contains(".")) {
-                                                url = "https://www.google.com/search?q=" + text;
-                                            } else {
-                                                url = "https://" + text;
-                                            }
-                                            webView.loadUrl(url);
-                                        }
-                                    }
-                                })
-                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .show();
+                        searchURL();
                         break;
 
                     case R.id.action_pin:
@@ -274,6 +247,45 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // Search or open URL
+    private void searchURL() {
+        final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
+        final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
+        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
+        textInput.setSingleLine(true);
+        textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        textInput.setText(webView.getUrl());
+        textInput.setSelectAllOnFocus(true);
+        textInput.setHint(R.string.action_search_message);
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(R.string.action_search_message)
+                .setView(textInputLayout)
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int whichButton) {
+                        if (textInput.getText() == null || textInput.getText().toString().equals(webView.getUrl())) {
+                            dialog.dismiss();
+                        } else {
+                            String text = textInput.getText().toString();
+                            String url;
+                            if (text.startsWith("https://") || text.startsWith("http://")) {
+                                url = text;
+                            } else if (text.contains(" ") || !text.contains(".")) {
+                                url = "https://www.google.com/search?q=" + text;
+                            } else {
+                                url = "https://" + text;
+                            }
+                            webView.loadUrl(url);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     // Handle new intents
