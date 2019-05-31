@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
 
                     case R.id.action_ad_block:
+                        // Toggle ad block
                         if (adBlockEnabled) {
                             adBlockEnabled = false;
                             textViewURL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_shield_off_outline, 0, 0, 0);
@@ -107,14 +108,17 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.action_reload:
+                        // Reload
                         webView.reload();
                         break;
 
                     case R.id.action_search:
+                        // Search or load an URL
                         searchURL();
                         break;
 
                     case R.id.action_pin:
+                        // Pin website shortcut to launcher home sreen
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                             Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
                             pinShortcut.setData(Uri.parse(webView.getUrl()));
@@ -142,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.action_share:
+                        // Share URL
                         Intent share = new Intent(Intent.ACTION_SEND);
                         share.setType("text/plain");
                         share.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebChromeClient(new WebChromeClient() {
 
-            // Update the progress bar
+            // Hide/show and update the progress bar
             @Override
             public void onProgressChanged(WebView view, int progress) {
                 progressBar.setProgress(progress);
@@ -207,8 +212,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Display URL in the top bar
         webView.setWebViewClient(new WebViewClient() {
+
+            // Display and update the URL in the top bar
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 textViewURL.setText(webView.getUrl());
@@ -249,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Search or open URL
+    // Search for a term or load a given URL or domain name
     private void searchURL() {
         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
@@ -269,12 +275,12 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             String text = textInput.getText().toString();
                             String url;
-                            if (text.startsWith("https://") || text.startsWith("http://")) {
+                            if (text.startsWith("https://") || text.startsWith("http://")) { // Input is an URL
                                 url = text;
-                            } else if (text.contains(" ") || !text.contains(".")) {
+                            } else if (text.contains(" ") || !text.contains(".")) { // Input is no URL, start Google search for the term
                                 url = "https://www.google.com/search?q=" + text;
                             } else {
-                                url = "https://" + text;
+                                url = "https://" + text; // Input might be a domain name, add https protocol and try to the load URL
                             }
                             webView.loadUrl(url);
                         }
@@ -328,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Prevent the back-button from closing the app
+    // Prevent the back button from closing the app
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
