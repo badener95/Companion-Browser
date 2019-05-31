@@ -27,6 +27,7 @@
                 android:layout_alignBottom="@+id/textViewURL"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="4dp"
+                android:adjustViewBounds="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/close_button"
                 android:scaleType="center"
@@ -39,12 +40,15 @@
                 android:layout_margin="8dp"
                 android:layout_toEndOf="@+id/closeButton"
                 android:background="@drawable/text_view_background"
+                android:drawableLeft="@drawable/ic_shield_outline"
+                android:drawablePadding="4dp"
                 android:elevation="2dp"
+                android:gravity="center_vertical"
                 android:padding="4dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
         </RelativeLayout>
 

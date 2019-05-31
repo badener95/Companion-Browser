@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String startPage = "https://www.google.com/";
     private Icon launcherIcon;
+    private boolean adBlockEnabled = true;
     private boolean isFullScreen = false;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
 
-        // Handle close button in the top bar
+        // Handle "close button" in the top bar
         final ImageButton closeButton = findViewById(R.id.closeButton);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +86,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+
+                    case R.id.action_ad_block:
+                        if (adBlockEnabled) {
+                            adBlockEnabled = false;
+                            textViewURL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_shield_off_outline, 0, 0, 0);
+                            webView.reload();
+                        } else {
+                            adBlockEnabled = true;
+                            textViewURL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_shield_outline, 0, 0, 0);
+                            webView.reload();
+                        }
+                        break;
 
                     case R.id.action_reload:
                         webView.reload();
@@ -248,13 +261,17 @@ public class MainActivity extends AppCompatActivity {
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 boolean ad;
                 String url = request.getUrl().toString();
-                if (!loadedUrls.containsKey(url)) {
-                    ad = AdBlocker.isAd(url);
-                    loadedUrls.put(url, ad);
+                if (adBlockEnabled) {
+                    if (!loadedUrls.containsKey(url)) {
+                        ad = AdBlocker.isAd(url);
+                        loadedUrls.put(url, ad);
+                    } else {
+                        ad = loadedUrls.get(url);
+                    }
+                    return ad ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, request);
                 } else {
-                    ad = loadedUrls.get(url);
+                    return super.shouldInterceptRequest(view, request);
                 }
-                return ad ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, request);
             }
         });
     }
