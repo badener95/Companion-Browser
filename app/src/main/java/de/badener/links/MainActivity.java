@@ -80,6 +80,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Handle "toggle ad block button" in the top bar
+        final ImageButton adBlockButton = findViewById(R.id.adBlockButton);
+        adBlockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (adBlockEnabled) {
+                    adBlockEnabled = false;
+                    adBlockButton.setImageDrawable(getDrawable(R.drawable.ic_shield_off_outline));
+                    webView.reload();
+                } else {
+                    adBlockEnabled = true;
+                    adBlockButton.setImageDrawable(getDrawable(R.drawable.ic_shield_outline));
+                    webView.reload();
+                }
+            }
+        });
+
         // Handle clicks on the top bar
         textViewURL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,19 +110,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-
-                    case R.id.action_ad_block:
-                        // Toggle ad block
-                        if (adBlockEnabled) {
-                            adBlockEnabled = false;
-                            textViewURL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_shield_off_outline, 0, 0, 0);
-                            webView.reload();
-                        } else {
-                            adBlockEnabled = true;
-                            textViewURL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_shield_outline, 0, 0, 0);
-                            webView.reload();
-                        }
-                        break;
 
                     case R.id.action_reload:
                         // Reload

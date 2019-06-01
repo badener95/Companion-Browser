@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="close_button">Beenden</string>
-    <string name="action_ad_block">Ad Block</string>
+    <string name="ad_block_button">Ad Block umschalten</string>
     <string name="action_pin">Verknüpfung</string>
     <string name="action_search">Suche</string>
     <string name="action_search_message">Suchbegriff oder URL eingeben</string>

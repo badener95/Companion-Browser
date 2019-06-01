@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_ad_block"
-        android:enabled="true"
-        android:icon="@drawable/ic_block"
-        android:title="@string/action_ad_block"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_pin"
         android:enabled="true"
         android:icon="@drawable/ic_pin_outline"
