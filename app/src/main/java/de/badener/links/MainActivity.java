@@ -1,18 +1,25 @@
 package de.badener.links;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.DownloadListener;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -21,11 +28,13 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -70,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
+
+        AdBlocker.init(MainActivity.this);
 
         // Handle "close button" in the top bar
         final ImageButton closeButton = findViewById(R.id.closeButton);
@@ -161,6 +172,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Handle downloads
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(final String url, final String userAgent,
+                                        final String contentDisposition, final String mimetype, final long contentLength) {
+                // Ask for confirmation before downloading file
+                new AlertDialog.Builder(MainActivity.this)
+                        .setMessage(R.string.download_confirm)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                // Check if permission is granted
+                                if (isStoragePermissionGranted()) {
+                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                    request.allowScanningByMediaScanner();
+                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                    String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
+                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                                    request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
+                                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                                    downloadManager.enqueue(request);
+                                    Toast.makeText(getApplicationContext(), R.string.download_started, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), R.string.storage_permission_needed, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
         // Handle intents
         Intent intent = getIntent();
         Uri uri = intent.getData();
@@ -175,8 +221,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Load either the start page (Google in this case) or the URL provided by an intent
         webView.loadUrl(url);
-
-        AdBlocker.init(MainActivity.this);
 
         webView.setWebChromeClient(new WebChromeClient() {
 
@@ -231,9 +275,8 @@ public class MainActivity extends AppCompatActivity {
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
 
             // Ad blocker based on this:
@@ -335,6 +378,17 @@ public class MainActivity extends AppCompatActivity {
             launcherIcon = Icon.createWithBitmap(webView.getFavicon());
         } else {
             launcherIcon = Icon.createWithResource(MainActivity.this, R.mipmap.ic_launcher);
+        }
+    }
+
+    // Check if permission is granted to write on storage for downloading files
+    public boolean isStoragePermissionGranted() {
+        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            // Ask for permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            return false;
         }
     }
 

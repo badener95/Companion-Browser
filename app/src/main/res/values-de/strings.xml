@@ -10,4 +10,7 @@
     <string name="action_share_title">URL teilen</string>
     <string name="confirm">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
+    <string name="download_confirm">Soll der Download gestartet werden?</string>
+    <string name="download_started">Download gestartet</string>
+    <string name="storage_permission_needed">Links braucht Speicherzugriff um Dateien zu downloaden</string>
 </resources>
