@@ -268,15 +268,20 @@ public class MainActivity extends AppCompatActivity {
                 textViewURL.setText(webView.getUrl());
             }
 
-            // Handle external links
+            // Handle some external links
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getUrl().toString()));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
+                String url = request.getUrl().toString();
+                if (url.startsWith("mailto:") || url.startsWith("tel:") || url.startsWith("sms:")
+                        || url.startsWith("whatsapp:") || url.contains("play.google.com")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                     return true;
+                } else {
+                    return false;
                 }
-                return false;
             }
 
             // Ad blocker based on this:
@@ -382,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Check if permission is granted to write on storage for downloading files
-    public boolean isStoragePermissionGranted() {
+    private boolean isStoragePermissionGranted() {
         if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
