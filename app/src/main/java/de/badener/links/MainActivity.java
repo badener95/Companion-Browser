@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
@@ -240,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
                 fullScreen.setVisibility(View.GONE);
                 topBarContainer.setVisibility(View.VISIBLE);
                 bottomNavigation.setVisibility(View.VISIBLE);
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                 isFullScreen = false;
             }
@@ -354,7 +352,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Hide status bar and nav bar when entering fullscreen
     private void enableFullScreen() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
