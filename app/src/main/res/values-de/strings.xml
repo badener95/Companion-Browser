@@ -12,6 +12,5 @@
     <string name="confirm">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
     <string name="download_started">Download gestartet</string>
-    <string name="storage_permission_needed">Links braucht Speicherzugriff um Dateien zu downloaden</string>
-    <string name="app_not_installed">App ist nicht installiert</string>
+    <string name="storage_permission_needed">Speicherzugriff benötigt um Dateien zu downloaden</string>
 </resources>

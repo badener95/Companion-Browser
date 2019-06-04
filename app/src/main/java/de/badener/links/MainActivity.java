@@ -263,15 +263,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
-                if (url.startsWith("mailto:") || url.startsWith("tel:") || url.startsWith("sms:")
-                        || url.startsWith("whatsapp:") || url.startsWith("tg:") || url.contains("play.google.com")) {
+                if (!URLUtil.isValidUrl(url)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
+                        return true;
                     } else {
-                        Toast.makeText(MainActivity.this, R.string.app_not_installed, Toast.LENGTH_SHORT).show();
+                        return false;
                     }
-                    return true;
                 } else {
                     return false;
                 }
