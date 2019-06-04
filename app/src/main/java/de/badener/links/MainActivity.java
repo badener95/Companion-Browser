@@ -175,35 +175,21 @@ public class MainActivity extends AppCompatActivity {
         // Handle downloads
         webView.setDownloadListener(new DownloadListener() {
             @Override
-            public void onDownloadStart(final String url, final String userAgent,
-                                        final String contentDisposition, final String mimetype, final long contentLength) {
-                // Ask for confirmation before downloading file
-                new AlertDialog.Builder(MainActivity.this)
-                        .setMessage(R.string.download_confirm)
-                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
-                                // Check if permission is granted
-                                if (isStoragePermissionGranted()) {
-                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                    request.allowScanningByMediaScanner();
-                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                    String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
-                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                                    request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
-                                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                                    downloadManager.enqueue(request);
-                                    Toast.makeText(getApplicationContext(), R.string.download_started, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), R.string.storage_permission_needed, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                // Check if permission is granted
+                if (isStoragePermissionGranted()) {
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    request.allowScanningByMediaScanner();
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                    request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
+                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    downloadManager.enqueue(request);
+                    Toast.makeText(getApplicationContext(), R.string.download_started, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, R.string.storage_permission_needed, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -273,10 +259,12 @@ public class MainActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
                 if (url.startsWith("mailto:") || url.startsWith("tel:") || url.startsWith("sms:")
-                        || url.startsWith("whatsapp:") || url.contains("play.google.com")) {
+                        || url.startsWith("whatsapp:") || url.startsWith("tg:") || url.contains("play.google.com")) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(MainActivity.this, R.string.app_not_installed, Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 } else {
@@ -307,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Search for a term or load a given URL or domain name
+    // Search for a term or load a given URL
     private void searchURL() {
         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
@@ -327,12 +315,12 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             String text = textInput.getText().toString();
                             String url;
-                            if (text.startsWith("https://") || text.startsWith("http://")) { // Input is an URL
+                            if (URLUtil.isValidUrl(text)) { // Input is a valid URL
                                 url = text;
-                            } else if (text.contains(" ") || !text.contains(".")) { // Input is no URL, start Google search for the term
+                            } else if (text.contains(" ") || !text.contains(".")) { // Input is obviously no URL, start Google search
                                 url = "https://www.google.com/search?q=" + text;
                             } else {
-                                url = "https://" + text; // Input might be a domain name, add https protocol and try to the load URL
+                                url = URLUtil.guessUrl(text); // Try to guess URL
                             }
                             webView.loadUrl(url);
                         }
