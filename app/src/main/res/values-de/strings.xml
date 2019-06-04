@@ -2,6 +2,7 @@
 <resources>
     <string name="close_button">Beenden</string>
     <string name="ad_block_button">Ad Block umschalten</string>
+    <string name="action_new_window">Neuer Tab</string>
     <string name="action_pin">Verknüpfung</string>
     <string name="action_search">Suche</string>
     <string name="action_search_message">Suchbegriff oder URL eingeben</string>

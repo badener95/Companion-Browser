@@ -121,16 +121,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
 
-                    case R.id.action_reload:
-                        // Reload
-                        webView.reload();
-                        break;
-
-                    case R.id.action_search:
-                        // Search or load an URL
-                        searchURL();
-                        break;
-
                     case R.id.action_pin:
                         // Pin website shortcut to launcher home sreen
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -157,6 +147,23 @@ public class MainActivity extends AppCompatActivity {
                             addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
                             sendBroadcast(addIntent);
                         }
+                        break;
+
+                    case R.id.action_reload:
+                        // Reload
+                        webView.reload();
+                        break;
+
+                    case R.id.action_search:
+                        // Search or load an URL
+                        searchURL();
+                        break;
+
+                    case R.id.action_new_window:
+                        // Open new window
+                        Intent newWindowIntent = new Intent(MainActivity.this, MainActivity.class);
+                        newWindowIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                        startActivity(newWindowIntent);
                         break;
 
                     case R.id.action_share:
@@ -330,15 +337,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
-    }
-
-    // Handle new intents
-    @Override
-    public void onNewIntent(Intent intent) {
-        Uri uri = intent.getData();
-        if (uri != null && !uri.toString().equals(webView.getUrl())) {
-            webView.loadUrl(uri.toString());
-        }
     }
 
     // Restore fullscreen after losing and gaining focus

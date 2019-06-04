@@ -3,6 +3,7 @@
     <string name="app_name" translatable="false">Links</string>
     <string name="close_button">Exit</string>
     <string name="ad_block_button">Toggle ad block</string>
+    <string name="action_new_window">New tab</string>
     <string name="action_pin">Shortcut</string>
     <string name="action_search">Search</string>
     <string name="action_search_message">Enter search term or URL</string>

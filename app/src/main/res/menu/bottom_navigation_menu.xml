@@ -10,6 +10,13 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_reload"
+        android:enabled="true"
+        android:icon="@drawable/ic_reload"
+        android:title="@string/action_reload"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_search"
         android:enabled="true"
         android:icon="@drawable/ic_search"
@@ -17,10 +24,10 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_reload"
+        android:id="@+id/action_new_window"
         android:enabled="true"
-        android:icon="@drawable/ic_reload"
-        android:title="@string/action_reload"
+        android:icon="@drawable/ic_plus_box_outline"
+        android:title="@string/action_new_window"
         app:showAsAction="ifRoom" />
 
     <item
@@ -29,4 +36,5 @@
         android:icon="@drawable/ic_share_outline"
         android:title="@string/action_share"
         app:showAsAction="ifRoom" />
+
 </menu>
