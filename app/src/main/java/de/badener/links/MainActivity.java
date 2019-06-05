@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                finishAndRemoveTask();
             }
         });
 
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
-            super.onBackPressed();
+            finishAndRemoveTask();
         }
     }
 }
