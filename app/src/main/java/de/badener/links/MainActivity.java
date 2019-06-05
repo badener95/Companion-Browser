@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
@@ -358,13 +360,25 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-    // Get favicon if available for launcher shortcuts
+    // Create a launcher icon
     private void getLauncherIcon() {
-        if (webView.getFavicon() != null) {
-            launcherIcon = Icon.createWithBitmap(webView.getFavicon());
-        } else {
-            launcherIcon = Icon.createWithResource(MainActivity.this, R.mipmap.ic_launcher);
-        }
+        Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(icon);
+        Paint paintCircle = new Paint();
+        paintCircle.setAntiAlias(true);
+        paintCircle.setColor(getColor(R.color.colorPrimary));
+        paintCircle.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(96, 96, 96, paintCircle); // Draw a round background
+        Paint paintText = new Paint();
+        paintText.setAntiAlias(true);
+        paintText.setColor(getColor(R.color.colorAccent));
+        paintText.setTextSize(112);
+        paintText.setFakeBoldText(true);
+        paintText.setTextAlign(Paint.Align.CENTER);
+        String name = webView.getTitle().substring(0, 2); // Get first two characters of website title
+        // Draw the first two characters
+        canvas.drawText(name, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+        launcherIcon = Icon.createWithBitmap(icon);
     }
 
     // Check if permission is granted to write on storage for downloading files
