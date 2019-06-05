@@ -10,6 +10,7 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
@@ -43,6 +44,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import de.badener.links.utils.AdBlocker;
 
@@ -360,24 +362,37 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-    // Create a launcher icon
+    // Create a launcher icon for shortcuts
     private void getLauncherIcon() {
+
+        // Get a random color from the ones provide by the array
+        String[] colorArray = {"#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#009688",
+                "#4caf50", "#ffc107", "#ff9800", "#ff5722", "#795548", "#9e9e9e", "#607d8b"};
+        String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
+
+        // Draw a round background with the random color
         Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(icon);
         Paint paintCircle = new Paint();
         paintCircle.setAntiAlias(true);
-        paintCircle.setColor(getColor(R.color.colorPrimary));
+        paintCircle.setColor(Color.parseColor(randomColor));
         paintCircle.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(96, 96, 96, paintCircle); // Draw a round background
+        canvas.drawCircle(96, 96, 96, paintCircle);
+
+        // Get first two characters of website title
+        String title = webView.getTitle().substring(0, 2);
+
+        // Draw the first two characters on the background
         Paint paintText = new Paint();
         paintText.setAntiAlias(true);
-        paintText.setColor(getColor(R.color.colorAccent));
+        paintText.setColor(Color.WHITE);
+        paintText.setAlpha(170);
         paintText.setTextSize(112);
         paintText.setFakeBoldText(true);
         paintText.setTextAlign(Paint.Align.CENTER);
-        String name = webView.getTitle().substring(0, 2); // Get first two characters of website title
-        // Draw the first two characters
-        canvas.drawText(name, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+        canvas.drawText(title, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+
+        // Create icon
         launcherIcon = Icon.createWithBitmap(icon);
     }
 
