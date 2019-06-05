@@ -366,8 +366,8 @@ public class MainActivity extends AppCompatActivity {
     private void getLauncherIcon() {
 
         // Get a random color from the ones provide by the array
-        String[] colorArray = {"#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#009688",
-                "#4caf50", "#ffc107", "#ff9800", "#ff5722", "#795548", "#9e9e9e", "#607d8b"};
+        String[] colorArray = {"#f44336", "#e91e63", "#9c27b0", "#3f51b5", "#2196f3",
+                "#009688", "#4caf50", "#ff9800", "#795548", "#607d8b"};
         String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
 
         // Draw a round background with the random color
