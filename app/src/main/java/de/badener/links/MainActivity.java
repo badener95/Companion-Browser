@@ -44,6 +44,8 @@ import de.badener.links.utils.AdBlocker;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String startPage = "https://www.google.com/";
+
     private FrameLayout topBarContainer;
     private AppCompatTextView textViewURL;
     private ProgressBar progressBar;
@@ -51,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigation;
     private FrameLayout fullScreen;
 
-    private static final String startPage = "https://www.google.com/";
     private Icon launcherIcon;
     private boolean adBlockEnabled = true;
     private boolean isFullScreen = false;
@@ -153,10 +154,10 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.action_share:
                         // Share URL
-                        Intent share = new Intent(Intent.ACTION_SEND);
-                        share.setType("text/plain");
-                        share.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
-                        startActivity(Intent.createChooser(share, getString(R.string.action_share_title)));
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("text/plain");
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
+                        startActivity(Intent.createChooser(shareIntent, getString(R.string.action_share_title)));
                         break;
                 }
                 return false;
@@ -168,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
                 Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                Intent downloadIntent = new Intent(Intent.ACTION_VIEW, uri);
+                downloadIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(downloadIntent);
             }
         });
 
@@ -228,29 +229,6 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebViewClient(new WebViewClient() {
 
-            // Display and update the URL in the top bar
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                textViewURL.setText(webView.getUrl());
-            }
-
-            // Handle some external links
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                if (!URLUtil.isValidUrl(url)) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        startActivity(intent);
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-
             // Ad blocker based on this:
             // https://github.com/CarbonROM/android_packages_apps_Quarks/commit/a9abee9694c8dd239cda403bd99ea9e0922b90b5
             private final Map<String, Boolean> loadedUrls = new HashMap<>();
@@ -269,6 +247,33 @@ public class MainActivity extends AppCompatActivity {
                     return ad ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, request);
                 } else {
                     return super.shouldInterceptRequest(view, request);
+                }
+            }
+
+            // Display and update the URL in the top bar
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                textViewURL.setText(webView.getUrl());
+            }
+
+            // Handle external links
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (!URLUtil.isValidUrl(url)) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                        return true;
+                    } else {
+                        String chromeUrl = "googlechrome://navigate?url=" + webView.getUrl();
+                        Intent chromeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(chromeUrl));
+                        chromeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(chromeIntent);
+                        return true;
+                    }
+                } else {
+                    return false;
                 }
             }
         });
