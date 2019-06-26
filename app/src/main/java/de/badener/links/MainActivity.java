@@ -126,31 +126,18 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
 
                     case R.id.action_pin:
-                        // Pin website shortcut to launcher home sreen
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                            Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
-                            pinShortcut.setData(Uri.parse(webView.getUrl()));
-                            pinShortcut.setAction(Intent.ACTION_MAIN);
-                            getLauncherIcon();
-                            String title = webView.getTitle();
-                            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
-                                    .setShortLabel(title)
-                                    .setIcon(launcherIcon)
-                                    .setIntent(pinShortcut)
-                                    .build();
-                            getSystemService(ShortcutManager.class).requestPinShortcut(shortcutInfo, null);
-                        } else {
-                            Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
-                            pinShortcut.setData(Uri.parse(webView.getUrl()));
-                            pinShortcut.setAction(Intent.ACTION_MAIN);
-                            getLauncherIcon();
-                            Intent addIntent = new Intent();
-                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, webView.getTitle());
-                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, launcherIcon);
-                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, pinShortcut);
-                            addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-                            sendBroadcast(addIntent);
-                        }
+                        // Pin website shortcut to launcher
+                        Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
+                        pinShortcut.setData(Uri.parse(webView.getUrl()));
+                        pinShortcut.setAction(Intent.ACTION_MAIN);
+                        getLauncherIcon();
+                        String title = webView.getTitle();
+                        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
+                                .setShortLabel(title)
+                                .setIcon(launcherIcon)
+                                .setIntent(pinShortcut)
+                                .build();
+                        Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
                         break;
 
                     case R.id.action_reload:
