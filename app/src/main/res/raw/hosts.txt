@@ -4,6 +4,7 @@
 123freeavatars.com
 180hits.de
 180searchassistant.com
+1rx.io
 207.net
 247media.com
 24log.com
@@ -965,7 +966,6 @@ awin1.com
 awzbijw.com
 axiomaticalley.com
 b-1st.com
-b59812ee54afcabd.com
 ba.afl.rakuten.co.jp
 babs.tv2.dk
 backbeatmedia.com
@@ -1034,12 +1034,10 @@ banners.isoftmarketing.com
 banners.linkbuddies.com
 banners.passion.com
 banners.resultonline.com
-banners.sexsearch.com
 banners.sys-con.com
 banners.thomsonlocal.com
 banners.videosz.com
 banners.virtuagirlhd.com
-banners.wunderground.com
 bannerserver.com
 bannersgomlm.com
 bannershotlink.perfectgonzo.com
@@ -1203,9 +1201,7 @@ claria.com
 class-act-clicks.com
 clearcomb.com
 clevernt.com
-click.absoluteagency.com
 click.fool.com
-click.kmindex.ru
 click2freemoney.com
 clickability.com
 clickadz.com
@@ -1226,6 +1222,7 @@ clicks.equantum.com
 clicks.mods.de
 clickserve.cc-dt.com
 clicksor.com
+clicktag.de
 clickthruserver.com
 clickthrutraffic.com
 clicktrace.info
@@ -1311,7 +1308,6 @@ counter.snackly.co
 counter.sparklit.com
 counter.yadro.ru
 counters.honesty.com
-counting.kmindex.ru
 counts.tucows.com
 coupling-media.de
 cp.abbp1.pw
@@ -1857,6 +1853,7 @@ lkqd.com
 loading321.com
 log.btopenworld.com
 log.logrocket.io
+log.pinterest.com
 logger.snackly.co
 logs.roku.com
 logua.com
@@ -1873,6 +1870,7 @@ lytics.io
 lzjl.com
 m.trb.com
 m1.webstats4u.com
+m2.ai
 m32.media
 m4n.nl
 m6r.eu
@@ -1971,6 +1969,7 @@ mlm.de
 mmismm.com
 mmstat.com
 mmtro.com
+moat.com
 moatads.com
 moatpixel.com
 mobclix.com
@@ -2247,15 +2246,18 @@ promote.pair.com
 promotion-campaigns.com
 pronetadvertising.com
 propellerads.com
+proper.io
 props.id
 proton-tm.com
 protraffic.com
 provexia.com
 prsitecheck.com
 ps7894.com
+pstmrk.it
 pub.chez.com
 pub.club-internet.fr
 pub.hardware.fr
+pub.network
 pub.realmedia.fr
 pubdirecte.com
 publicidad.elmundo.es
@@ -2425,7 +2427,6 @@ sedotracker.com
 selectionsugar.com
 selectivesummer.com
 sendmepixel.com
-sendpulse.com
 sensismediasmart.com.au
 separatesilver.com
 serv0.com
@@ -2529,6 +2530,7 @@ squirrelhands.com
 srvmath.com
 srwww1.com
 st.dynamicyield.com
+stack-sonar.com
 stackadapt.com
 stakingscrew.com
 stakingslope.com
@@ -2641,7 +2643,6 @@ textlinks.com
 tfag.de
 theadex.com
 theadhost.com
-theads.me
 thebugs.ws
 therapistla.com
 thinkablerice.com
@@ -2832,6 +2833,7 @@ webads.co.nz
 webads.nl
 webangel.ru
 webcash.nl
+webcontentassessor.com
 webcounter.cz
 webcounter.goweb.de
 webgains.com
@@ -2865,6 +2867,7 @@ whispa.com
 whisperingcrib.com
 whoisonline.net
 wholesaletraffic.info
+widdit.com
 widespace.com
 widget.privy.com
 widgetbucks.com

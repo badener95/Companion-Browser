@@ -1,11 +1,8 @@
 package de.badener.links;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
@@ -15,12 +12,10 @@ import android.graphics.Paint;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.DownloadListener;
-import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -30,13 +25,11 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -44,6 +37,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import de.badener.links.utils.AdBlocker;
@@ -343,8 +337,8 @@ public class MainActivity extends AppCompatActivity {
     private void getLauncherIcon() {
 
         // Get a random color from the ones provide by the array
-        String[] colorArray = {"#f44336", "#e91e63", "#9c27b0", "#3f51b5", "#2196f3",
-                "#009688", "#4caf50", "#ff9800", "#795548", "#607d8b"};
+        String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
+                "#00bfA5", "#00c853", "ffd600", "#ff6d00"};
         String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
 
         // Draw a round background with the random color
@@ -363,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
         Paint paintText = new Paint();
         paintText.setAntiAlias(true);
         paintText.setColor(Color.WHITE);
-        paintText.setAlpha(170);
         paintText.setTextSize(112);
         paintText.setFakeBoldText(true);
         paintText.setTextAlign(Paint.Align.CENTER);
