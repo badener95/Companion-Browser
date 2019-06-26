@@ -173,20 +173,10 @@ public class MainActivity extends AppCompatActivity {
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                // Check if permission is granted
-                if (isStoragePermissionGranted()) {
-                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                    request.allowScanningByMediaScanner();
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                    request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
-                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                    downloadManager.enqueue(request);
-                    Toast.makeText(getApplicationContext(), R.string.download_started, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, R.string.storage_permission_needed, Toast.LENGTH_SHORT).show();
-                }
+                Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
@@ -381,17 +371,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Create icon
         launcherIcon = Icon.createWithBitmap(icon);
-    }
-
-    // Check if permission is granted to write on storage for downloading files
-    private boolean isStoragePermissionGranted() {
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            // Ask for permission
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            return false;
-        }
     }
 
     // Prevent the back button from closing the app
