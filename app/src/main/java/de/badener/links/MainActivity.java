@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get a random color from the ones provide by the array
         String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
-                "#00bfA5", "#00c853", "ffd600", "#ff6d00"};
+                "#00bfA5", "#00c853", "#ffd600", "#ff6d00"};
         String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
 
         // Draw a round background with the random color
