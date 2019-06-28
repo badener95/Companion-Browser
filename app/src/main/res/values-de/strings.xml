@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="close_button">Beenden</string>
-    <string name="ad_block_button">Ad Block umschalten</string>
-    <string name="action_new_window">Neuer Tab</string>
-    <string name="action_pin">Verknüpfung</string>
-    <string name="action_search">Suche</string>
-    <string name="action_search_message">Suchbegriff oder URL eingeben</string>
+    <string name="search_message">Suchbegriff oder URL eingeben</string>
+    <string name="menu_button">Menü</string>
     <string name="action_reload">Neu laden</string>
+    <string name="action_new_window">Neues Fenster</string>
+    <string name="action_toggle_ad_blocking">Werbeblocker umschalten</string>
     <string name="action_share">Teilen</string>
-    <string name="action_share_title">URL teilen</string>
+    <string name="action_add_shortcut">Verknüpfung hinzufügen</string>
+    <string name="action_close_window">Fenster schließen</string>
+    <string name="ad_blocking_disabled">Werbeblocker deaktiviert</string>
+    <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
+    <string name="share_title">URL teilen</string>
     <string name="confirm">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
 </resources>

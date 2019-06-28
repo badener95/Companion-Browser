@@ -25,13 +25,16 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.PopupMenu;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -40,21 +43,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-import de.badener.links.utils.AdBlocker;
+import de.badener.links.utils.AdBlocking;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String startPage = "https://www.google.com/";
 
-    private FrameLayout topBarContainer;
+    private WebView webView;
+    private RelativeLayout bottomBarContainer;
     private AppCompatTextView textViewURL;
     private ProgressBar progressBar;
-    private WebView webView;
-    private BottomNavigationView bottomNavigation;
     private FrameLayout fullScreen;
 
     private Icon launcherIcon;
-    private boolean adBlockEnabled = true;
+    private boolean adBlockingEnabled = true;
     private boolean isFullScreen = false;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -63,11 +65,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        topBarContainer = findViewById(R.id.topBarContainer);
+        webView = findViewById(R.id.webView);
+        bottomBarContainer = findViewById(R.id.bottomBarContainer);
         textViewURL = findViewById(R.id.textViewURL);
         progressBar = findViewById(R.id.progressBar);
-        webView = findViewById(R.id.webView);
-        bottomNavigation = findViewById(R.id.bottomNavigation);
         fullScreen = findViewById(R.id.fullScreenContainer);
 
         // WebView options
@@ -78,35 +79,9 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
 
-        AdBlocker.init(MainActivity.this);
+        AdBlocking.init(MainActivity.this);
 
-        // Handle "close button" in the top bar
-        final ImageButton closeButton = findViewById(R.id.closeButton);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finishAndRemoveTask();
-            }
-        });
-
-        // Handle "toggle ad block button" in the top bar
-        final ImageButton adBlockButton = findViewById(R.id.adBlockButton);
-        adBlockButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (adBlockEnabled) {
-                    adBlockEnabled = false;
-                    adBlockButton.setImageDrawable(getDrawable(R.drawable.ic_shield_off_outline));
-                    webView.reload();
-                } else {
-                    adBlockEnabled = true;
-                    adBlockButton.setImageDrawable(getDrawable(R.drawable.ic_shield_outline));
-                    webView.reload();
-                }
-            }
-        });
-
-        // Handle clicks on the top bar
+        // Handle clicks on the "URL field"
         textViewURL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,53 +89,80 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle the bottom navigation bar
-        bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        // Handle "menu button" in bottom bar
+        final ImageButton menuButton = findViewById(R.id.menuButton);
+        menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(MainActivity.this, menuButton);
+                popup.inflate(R.menu.menu_main);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
 
-                    case R.id.action_pin:
-                        // Pin website shortcut to launcher
-                        Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
-                        pinShortcut.setData(Uri.parse(webView.getUrl()));
-                        pinShortcut.setAction(Intent.ACTION_MAIN);
-                        getLauncherIcon();
-                        String title = webView.getTitle();
-                        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
-                                .setShortLabel(title)
-                                .setIcon(launcherIcon)
-                                .setIntent(pinShortcut)
-                                .build();
-                        Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
-                        break;
+                            case R.id.action_reload:
+                                // Reload
+                                webView.reload();
+                                return true;
 
-                    case R.id.action_reload:
-                        // Reload
-                        webView.reload();
-                        break;
+                            case R.id.action_new_window:
+                                // Open new window
+                                Intent newWindowIntent = new Intent(MainActivity.this, MainActivity.class);
+                                newWindowIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                                startActivity(newWindowIntent);
+                                return true;
 
-                    case R.id.action_search:
-                        // Search or load an URL
-                        searchURL();
-                        break;
+                            case R.id.action_toggle_ad_blocking:
+                                // Toggle ad blocking
+                                if (adBlockingEnabled) {
+                                    adBlockingEnabled = false;
+                                    Toast.makeText(MainActivity.this, R.string.ad_blocking_disabled, Toast.LENGTH_SHORT).show();
+                                    webView.reload();
+                                } else {
+                                    adBlockingEnabled = true;
+                                    Toast.makeText(MainActivity.this, R.string.ad_blocking_enabled, Toast.LENGTH_SHORT).show();
+                                    webView.reload();
+                                }
+                                return true;
 
-                    case R.id.action_new_window:
-                        // Open new window
-                        Intent newWindowIntent = new Intent(MainActivity.this, MainActivity.class);
-                        newWindowIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                        startActivity(newWindowIntent);
-                        break;
+                            case R.id.action_share:
+                                // Share URL
+                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                shareIntent.setType("text/plain");
+                                shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
+                                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_title)));
+                                return true;
 
-                    case R.id.action_share:
-                        // Share URL
-                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.setType("text/plain");
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
-                        startActivity(Intent.createChooser(shareIntent, getString(R.string.action_share_title)));
-                        break;
-                }
-                return false;
+                            case R.id.action_add_shortcut:
+                                // Pin website shortcut to launcher
+                                Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
+                                pinShortcut.setData(Uri.parse(webView.getUrl()));
+                                pinShortcut.setAction(Intent.ACTION_MAIN);
+                                getLauncherIcon();
+                                String title = webView.getTitle();
+                                ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
+                                        .setShortLabel(title)
+                                        .setIcon(launcherIcon)
+                                        .setIntent(pinShortcut)
+                                        .build();
+                                Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
+                                return true;
+
+                            case R.id.action_close_window:
+                                // Close window
+                                finishAndRemoveTask();
+                                return true;
+
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+                // Show icons in menu
+                MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
+                menuHelper.setForceShowIcon(true);
+                menuHelper.show();
             }
         });
 
@@ -207,8 +209,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
-                topBarContainer.setVisibility(View.GONE);
-                bottomNavigation.setVisibility(View.GONE);
+                bottomBarContainer.setVisibility(View.GONE);
                 fullScreen.setVisibility(View.VISIBLE);
                 fullScreen.addView(view);
                 enableFullScreen();
@@ -220,8 +221,7 @@ public class MainActivity extends AppCompatActivity {
             public void onHideCustomView() {
                 super.onHideCustomView();
                 fullScreen.setVisibility(View.GONE);
-                topBarContainer.setVisibility(View.VISIBLE);
-                bottomNavigation.setVisibility(View.VISIBLE);
+                bottomBarContainer.setVisibility(View.VISIBLE);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                 isFullScreen = false;
             }
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebViewClient(new WebViewClient() {
 
-            // Ad blocker based on this:
+            // Ad blocking based on this:
             // https://github.com/CarbonROM/android_packages_apps_Quarks/commit/a9abee9694c8dd239cda403bd99ea9e0922b90b5
             private final Map<String, Boolean> loadedUrls = new HashMap<>();
 
@@ -237,20 +237,20 @@ public class MainActivity extends AppCompatActivity {
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 boolean ad;
                 String url = request.getUrl().toString();
-                if (adBlockEnabled) {
+                if (adBlockingEnabled) {
                     if (!loadedUrls.containsKey(url)) {
-                        ad = AdBlocker.isAd(url);
+                        ad = AdBlocking.isAd(url);
                         loadedUrls.put(url, ad);
                     } else {
                         ad = loadedUrls.get(url);
                     }
-                    return ad ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, request);
+                    return ad ? AdBlocking.createEmptyResource() : super.shouldInterceptRequest(view, request);
                 } else {
                     return super.shouldInterceptRequest(view, request);
                 }
             }
 
-            // Display and update the URL in the top bar
+            // Display and update the URL in the bottom bar
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 textViewURL.setText(webView.getUrl());
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
         textInput.setSelectAllOnFocus(true);
         textInputLayout.addView(textInput);
         new AlertDialog.Builder(MainActivity.this)
-                .setMessage(R.string.action_search_message)
+                .setMessage(R.string.search_message)
                 .setView(textInputLayout)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int whichButton) {
