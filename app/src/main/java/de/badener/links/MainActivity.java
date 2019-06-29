@@ -3,6 +3,8 @@ package de.badener.links;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
@@ -42,6 +44,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private RelativeLayout bottomBarContainer;
     private ImageButton webViewControlButton;
+    private ImageButton openDefaultAppButton;
     private AppCompatTextView textViewURL;
     private ImageButton menuButton;
     private ProgressBar progressBar;
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         webView = findViewById(R.id.webView);
         bottomBarContainer = findViewById(R.id.bottomBarContainer);
         webViewControlButton = findViewById(R.id.webViewControlButton);
+        openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         textViewURL = findViewById(R.id.textViewURL);
         menuButton = findViewById(R.id.menuButton);
         progressBar = findViewById(R.id.progressBar);
@@ -89,14 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
         AdBlocking.init(MainActivity.this);
 
-        // Handle clicks on the URL field
-        textViewURL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchURL();
-            }
-        });
-
         // Handle "WebView control button" in URL text field
         webViewControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +103,23 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     webView.reload();
                 }
+            }
+        });
+
+        // Handle "open default app button" in URL text field
+        openDefaultAppButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
+                startActivity(intent);
+            }
+        });
+
+        // Handle clicks on the URL text field
+        textViewURL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchURL();
             }
         });
 
@@ -202,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 textViewURL.setText(webView.getUrl());
                 webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
+                showHideOpenDefaultAppButton();
                 isLoading = true;
             }
 
@@ -366,6 +381,22 @@ public class MainActivity extends AppCompatActivity {
         MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
         menuHelper.setForceShowIcon(true);
         menuHelper.show();
+    }
+
+    // Show/hide "open default app button" in URL text field
+    private void showHideOpenDefaultAppButton() {
+        String packageName = "de.badener.links";
+        PackageManager packageManager = MainActivity.this.getPackageManager();
+        Intent packagesIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
+        List<ResolveInfo> list = packageManager.queryIntentActivities(packagesIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo info : list) {
+            packageName = info.activityInfo.packageName;
+        }
+        if (packageName.equals("de.badener.links")) { // No other app can handle this link or "Links" is the default app
+            openDefaultAppButton.setVisibility(View.GONE);
+        } else {
+            openDefaultAppButton.setVisibility(View.VISIBLE); // There is another app for this link
+        }
     }
 
     // Restore fullscreen after losing and gaining focus
