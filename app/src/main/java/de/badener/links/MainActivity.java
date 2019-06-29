@@ -234,15 +234,16 @@ public class MainActivity extends AppCompatActivity {
                 String url = request.getUrl().toString();
                 if (!URLUtil.isValidUrl(url)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    if (intent.resolveActivity(getPackageManager()) != null) {
+                    PackageManager manager = MainActivity.this.getPackageManager();
+                    List<ResolveInfo> list = manager.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+                    if (list.size() > 1) { // There is more than one app, show a chooser
+                        startActivity(Intent.createChooser(intent, getString(R.string.open_title)));
+                        return true;
+                    } else if (list.size() > 0) { // There is just one app
                         startActivity(intent);
                         return true;
                     } else {
-                        String chromeUrl = "googlechrome://navigate?url=" + webView.getUrl();
-                        Intent chromeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(chromeUrl));
-                        chromeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(chromeIntent);
-                        return true;
+                        return false; // There is no app
                     }
                 } else {
                     return false;

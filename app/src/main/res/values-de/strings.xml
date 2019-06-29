@@ -12,6 +12,7 @@
     <string name="action_close_window">Fenster schließen</string>
     <string name="ad_blocking_disabled">Werbeblocker deaktiviert</string>
     <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
+    <string name="open_title">App wählen</string>
     <string name="share_title">URL teilen</string>
     <string name="confirm">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
