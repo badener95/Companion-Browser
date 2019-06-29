@@ -15,26 +15,46 @@
         android:background="@color/colorPrimary"
         android:elevation="8dp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textViewURL"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:layout_toStartOf="@id/menuButton"
-            android:autoSizeTextType="uniform"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_toStartOf="@+id/menuButton"
             android:background="@drawable/text_view_background"
-            android:gravity="center_vertical"
-            android:padding="8dp"
-            android:singleLine="true"
-            android:text="@string/app_name"
-            android:textColor="@android:color/white" />
+            android:elevation="2dp">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/webViewControlButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/webview_control_button"
+                app:srcCompat="@drawable/ic_cancel" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewURL"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@+id/webViewControlButton"
+                android:autoSizeTextType="uniform"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textColor="@android:color/white" />
+
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/menuButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/menu_button"
@@ -45,7 +65,6 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_alignParentTop="true"
             android:progress="50"
             android:progressBackgroundTint="@color/colorPrimaryLight"
             android:progressBackgroundTintMode="src_over"

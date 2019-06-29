@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="webview_control_button">Neu laden/abbrechen</string>
     <string name="search_message">Suchbegriff oder URL eingeben</string>
     <string name="menu_button">Menü</string>
-    <string name="action_reload">Neu laden</string>
     <string name="action_new_window">Neues Fenster</string>
-    <string name="action_toggle_ad_blocking">Werbeblocker umschalten</string>
+    <string name="action_disable_ad_blocking">Werbeblocker deaktivieren</string>
+    <string name="action_enable_ad_blocking">Werbeblocker aktivieren</string>
     <string name="action_share">Teilen</string>
     <string name="action_add_shortcut">Verknüpfung hinzufügen</string>
     <string name="action_close_window">Fenster schließen</string>

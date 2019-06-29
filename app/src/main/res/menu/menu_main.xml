@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_reload"
-        android:icon="@drawable/ic_reload"
-        android:title="@string/action_reload"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_new_window"
         android:icon="@drawable/ic_add_circle_outline"
         android:title="@string/action_new_window"
@@ -17,7 +11,7 @@
     <item
         android:id="@+id/action_toggle_ad_blocking"
         android:icon="@drawable/ic_shield_outline"
-        android:title="@string/action_toggle_ad_blocking"
+        android:title="@string/action_disable_ad_blocking"
         app:showAsAction="never" />
 
     <item
