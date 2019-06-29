@@ -290,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
         textInput.setSingleLine(true);
         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         textInput.setText(webView.getUrl());
+        textInput.setTextColor(Color.WHITE);
         textInput.setSelectAllOnFocus(true);
         textInputLayout.addView(textInput);
         builder.setMessage(R.string.search_message);
