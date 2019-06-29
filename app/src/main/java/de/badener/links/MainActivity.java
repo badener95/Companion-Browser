@@ -1,6 +1,8 @@
 package de.badener.links;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,11 +16,13 @@ import android.graphics.Paint;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.DownloadListener;
+import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -38,6 +42,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -135,10 +140,23 @@ public class MainActivity extends AppCompatActivity {
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
-                Intent downloadIntent = new Intent(Intent.ACTION_VIEW, uri);
-                downloadIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(downloadIntent);
+                // Check if storage permission is granted and start download if applicable
+                if (isStoragePermissionGranted()) {
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    request.allowScanningByMediaScanner();
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                    request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
+                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    Objects.requireNonNull(downloadManager).enqueue(request);
+                    Toast toast = Toast.makeText(MainActivity.this, R.string.download_started, Toast.LENGTH_SHORT);
+                    View view = toast.getView();
+                    DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
+                    TextView text = view.findViewById(android.R.id.message);
+                    text.setTextColor(Color.WHITE);
+                    toast.show();
+                }
             }
         });
 
@@ -451,6 +469,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Create icon
         launcherIcon = Icon.createWithBitmap(icon);
+    }
+
+    // Check if permission is granted to write on storage for downloading files
+    private boolean isStoragePermissionGranted() {
+        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            return true; // Permission is granted
+        } else {
+            // Ask for permission because it is not granted yet
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            Toast toast = Toast.makeText(MainActivity.this, R.string.storage_permission_needed, Toast.LENGTH_SHORT);
+            View view = toast.getView();
+            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
+            TextView text = view.findViewById(android.R.id.message);
+            text.setTextColor(Color.WHITE);
+            toast.show();
+            return false;
+        }
     }
 
     // Prevent the back button from closing the app

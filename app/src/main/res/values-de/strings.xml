@@ -14,6 +14,8 @@
     <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
     <string name="open_title">App wählen</string>
     <string name="share_title">URL teilen</string>
+    <string name="download_started">Download gestartet</string>
+    <string name="storage_permission_needed">Speicherzugriff benötigt um Dateien zu downloaden</string>
     <string name="confirm">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
 </resources>
