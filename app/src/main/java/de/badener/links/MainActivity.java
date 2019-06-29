@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -35,6 +36,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -307,11 +309,21 @@ public class MainActivity extends AppCompatActivity {
                         // Toggle ad blocking
                         if (isAdBlockingEnabled) {
                             isAdBlockingEnabled = false;
-                            Toast.makeText(MainActivity.this, R.string.ad_blocking_disabled, Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(MainActivity.this, R.string.ad_blocking_disabled, Toast.LENGTH_SHORT);
+                            View view = toast.getView();
+                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
+                            TextView text = view.findViewById(android.R.id.message);
+                            text.setTextColor(Color.WHITE);
+                            toast.show();
                             webView.reload();
                         } else {
                             isAdBlockingEnabled = true;
-                            Toast.makeText(MainActivity.this, R.string.ad_blocking_enabled, Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(MainActivity.this, R.string.ad_blocking_enabled, Toast.LENGTH_SHORT);
+                            View view = toast.getView();
+                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
+                            TextView text = view.findViewById(android.R.id.message);
+                            text.setTextColor(Color.WHITE);
+                            toast.show();
                             webView.reload();
                         }
                         return true;
