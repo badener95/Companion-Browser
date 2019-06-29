@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
@@ -281,41 +282,47 @@ public class MainActivity extends AppCompatActivity {
 
     // Search for a term or load a given URL
     private void searchURL() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
+
         textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
         textInput.setSingleLine(true);
         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         textInput.setText(webView.getUrl());
         textInput.setSelectAllOnFocus(true);
         textInputLayout.addView(textInput);
-        new AlertDialog.Builder(MainActivity.this)
-                .setMessage(R.string.search_message)
-                .setView(textInputLayout)
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int whichButton) {
-                        if (textInput.getText() == null || textInput.getText().toString().equals(webView.getUrl())) {
-                            dialog.dismiss();
-                        } else {
-                            String text = textInput.getText().toString();
-                            String url;
-                            if (URLUtil.isValidUrl(text)) { // Input is a valid URL
-                                url = text;
-                            } else if (text.contains(" ") || !text.contains(".")) { // Input is obviously no URL, start Google search
-                                url = "https://www.google.com/search?q=" + text;
-                            } else {
-                                url = URLUtil.guessUrl(text); // Try to guess URL
-                            }
-                            webView.loadUrl(url);
-                        }
+        builder.setMessage(R.string.search_message);
+        builder.setView(textInputLayout);
+
+        builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, int whichButton) {
+                if (textInput.getText() == null || textInput.getText().toString().equals(webView.getUrl())) {
+                    dialog.dismiss();
+                } else {
+                    String text = textInput.getText().toString();
+                    String url;
+                    if (URLUtil.isValidUrl(text)) { // Input is a valid URL
+                        url = text;
+                    } else if (text.contains(" ") || !text.contains(".")) { // Input is obviously no URL, start Google search
+                        url = "https://www.google.com/search?q=" + text;
+                    } else {
+                        url = URLUtil.guessUrl(text); // Try to guess URL
                     }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+                    webView.loadUrl(url);
+                }
+            }
+        });
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        textInput.requestFocus();
+        Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        dialog.show();
     }
 
     // Restore fullscreen after losing and gaining focus
