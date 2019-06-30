@@ -438,6 +438,15 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
+    // Enter picture in picture mode
+    @Override
+    public void onUserLeaveHint() {
+        PackageManager packageManager = MainActivity.this.getPackageManager();
+        if (isFullScreen && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+            enterPictureInPictureMode();
+        }
+    }
+
     // Create a launcher icon for shortcuts
     private void getLauncherIcon() {
 
