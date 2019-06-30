@@ -42,6 +42,7 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -151,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
                     Objects.requireNonNull(downloadManager).enqueue(request);
                     Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.download_started, Snackbar.LENGTH_SHORT);
                     View view = snackBar.getView();
-                    view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                    DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
                     TextView text = view.findViewById(R.id.snackbar_text);
-                    text.setTextColor(Color.WHITE);
+                    text.setTextColor(getColor(R.color.colorAccent));
                     snackBar.show();
                 }
             }
@@ -344,18 +345,18 @@ public class MainActivity extends AppCompatActivity {
                             isAdBlockingEnabled = false;
                             Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT);
                             View view = snackBar.getView();
-                            view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
                             TextView text = view.findViewById(R.id.snackbar_text);
-                            text.setTextColor(Color.WHITE);
+                            text.setTextColor(getColor(R.color.colorAccent));
                             snackBar.show();
                             webView.reload();
                         } else {
                             isAdBlockingEnabled = true;
                             Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT);
                             View view = snackBar.getView();
-                            view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
                             TextView text = view.findViewById(R.id.snackbar_text);
-                            text.setTextColor(Color.WHITE);
+                            text.setTextColor(getColor(R.color.colorAccent));
                             snackBar.show();
                             webView.reload();
                         }
@@ -488,9 +489,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT);
             View view = snackBar.getView();
-            view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
             TextView text = view.findViewById(R.id.snackbar_text);
-            text.setTextColor(Color.WHITE);
+            text.setTextColor(getColor(R.color.colorAccent));
             snackBar.show();
             return false;
         }
