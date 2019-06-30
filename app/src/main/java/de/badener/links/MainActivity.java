@@ -34,7 +34,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,8 +42,8 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -150,12 +149,12 @@ public class MainActivity extends AppCompatActivity {
                     request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
                     DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Objects.requireNonNull(downloadManager).enqueue(request);
-                    Toast toast = Toast.makeText(MainActivity.this, R.string.download_started, Toast.LENGTH_SHORT);
-                    View view = toast.getView();
-                    DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-                    TextView text = view.findViewById(android.R.id.message);
+                    Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.download_started, Snackbar.LENGTH_SHORT);
+                    View view = snackBar.getView();
+                    view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                    TextView text = view.findViewById(R.id.snackbar_text);
                     text.setTextColor(Color.WHITE);
-                    toast.show();
+                    snackBar.show();
                 }
             }
         });
@@ -252,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
                 String url = request.getUrl().toString();
                 if (!URLUtil.isValidUrl(url)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    PackageManager manager = MainActivity.this.getPackageManager();
-                    List<ResolveInfo> list = manager.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+                    PackageManager packageManager = MainActivity.this.getPackageManager();
+                    List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL);
                     if (list.size() > 1) { // There is more than one app, show a chooser
                         startActivity(Intent.createChooser(intent, getString(R.string.open_title)));
                         return true;
@@ -343,21 +342,21 @@ public class MainActivity extends AppCompatActivity {
                         // Toggle ad blocking
                         if (isAdBlockingEnabled) {
                             isAdBlockingEnabled = false;
-                            Toast toast = Toast.makeText(MainActivity.this, R.string.ad_blocking_disabled, Toast.LENGTH_SHORT);
-                            View view = toast.getView();
-                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-                            TextView text = view.findViewById(android.R.id.message);
+                            Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT);
+                            View view = snackBar.getView();
+                            view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                            TextView text = view.findViewById(R.id.snackbar_text);
                             text.setTextColor(Color.WHITE);
-                            toast.show();
+                            snackBar.show();
                             webView.reload();
                         } else {
                             isAdBlockingEnabled = true;
-                            Toast toast = Toast.makeText(MainActivity.this, R.string.ad_blocking_enabled, Toast.LENGTH_SHORT);
-                            View view = toast.getView();
-                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-                            TextView text = view.findViewById(android.R.id.message);
+                            Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT);
+                            View view = snackBar.getView();
+                            view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                            TextView text = view.findViewById(R.id.snackbar_text);
                             text.setTextColor(Color.WHITE);
-                            toast.show();
+                            snackBar.show();
                             webView.reload();
                         }
                         return true;
@@ -372,15 +371,15 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.action_add_shortcut:
                         // Pin website shortcut to launcher
-                        Intent pinShortcut = new Intent(MainActivity.this, MainActivity.class);
-                        pinShortcut.setData(Uri.parse(webView.getUrl()));
-                        pinShortcut.setAction(Intent.ACTION_MAIN);
+                        Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
+                        pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
+                        pinShortcutIntent.setAction(Intent.ACTION_MAIN);
                         getLauncherIcon();
                         String title = webView.getTitle();
                         ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
                                 .setShortLabel(title)
                                 .setIcon(launcherIcon)
-                                .setIntent(pinShortcut)
+                                .setIntent(pinShortcutIntent)
                                 .build();
                         Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
                         return true;
@@ -405,9 +404,9 @@ public class MainActivity extends AppCompatActivity {
     // Show/hide "open default app button" in URL text field
     private void showHideOpenDefaultAppButton() {
         String packageName = "de.badener.links";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
         PackageManager packageManager = MainActivity.this.getPackageManager();
-        Intent packagesIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
-        List<ResolveInfo> list = packageManager.queryIntentActivities(packagesIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo info : list) {
             packageName = info.activityInfo.packageName;
         }
@@ -487,12 +486,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Ask for permission because it is not granted yet
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            Toast toast = Toast.makeText(MainActivity.this, R.string.storage_permission_needed, Toast.LENGTH_SHORT);
-            View view = toast.getView();
-            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-            TextView text = view.findViewById(android.R.id.message);
+            Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT);
+            View view = snackBar.getView();
+            view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+            TextView text = view.findViewById(R.id.snackbar_text);
             text.setTextColor(Color.WHITE);
-            toast.show();
+            snackBar.show();
             return false;
         }
     }
