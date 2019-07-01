@@ -30,7 +30,7 @@
     <RelativeLayout
         android:id="@+id/bottomBarContainer"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary">
 
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:background="?selectableItemBackgroundBorderless"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/webview_control_button"
                 app:srcCompat="@drawable/ic_cancel" />
 
@@ -58,7 +58,7 @@
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@+id/webViewControlButton"
                 android:adjustViewBounds="true"
-                android:background="?selectableItemBackgroundBorderless"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/open_default_app_button"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_open_in_app" />
@@ -85,7 +85,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:adjustViewBounds="true"
-            android:background="?selectableItemBackgroundBorderless"
+            android:background="?attr/actionBarItemBackground"
             android:contentDescription="@string/menu_button"
             app:srcCompat="@drawable/ic_more" />
 
