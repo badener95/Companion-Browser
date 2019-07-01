@@ -32,8 +32,6 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +40,6 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -61,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String startPage = "https://www.google.com/";
 
     private WebView webView;
-    private RelativeLayout bottomBarContainer;
     private ImageButton webViewControlButton;
     private ImageButton openDefaultAppButton;
     private AppCompatTextView textViewURL;
@@ -81,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        bottomBarContainer = findViewById(R.id.bottomBarContainer);
         webViewControlButton = findViewById(R.id.webViewControlButton);
         openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         textViewURL = findViewById(R.id.textViewURL);
@@ -151,10 +146,6 @@ public class MainActivity extends AppCompatActivity {
                     DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Objects.requireNonNull(downloadManager).enqueue(request);
                     Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.download_started, Snackbar.LENGTH_SHORT);
-                    View view = snackBar.getView();
-                    DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-                    TextView text = view.findViewById(R.id.snackbar_text);
-                    text.setTextColor(getColor(R.color.colorAccent));
                     snackBar.show();
                 }
             }
@@ -187,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
-                bottomBarContainer.setVisibility(View.GONE);
                 fullScreen.setVisibility(View.VISIBLE);
                 fullScreen.addView(view);
                 enableFullScreen();
@@ -199,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
             public void onHideCustomView() {
                 super.onHideCustomView();
                 fullScreen.setVisibility(View.GONE);
-                bottomBarContainer.setVisibility(View.VISIBLE);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                 isFullScreen = false;
             }
@@ -272,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Search for a term or load a given URL
     private void searchURL() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
 
@@ -344,19 +333,11 @@ public class MainActivity extends AppCompatActivity {
                         if (isAdBlockingEnabled) {
                             isAdBlockingEnabled = false;
                             Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT);
-                            View view = snackBar.getView();
-                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-                            TextView text = view.findViewById(R.id.snackbar_text);
-                            text.setTextColor(getColor(R.color.colorAccent));
                             snackBar.show();
                             webView.reload();
                         } else {
                             isAdBlockingEnabled = true;
                             Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT);
-                            View view = snackBar.getView();
-                            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-                            TextView text = view.findViewById(R.id.snackbar_text);
-                            text.setTextColor(getColor(R.color.colorAccent));
                             snackBar.show();
                             webView.reload();
                         }
@@ -488,10 +469,6 @@ public class MainActivity extends AppCompatActivity {
             // Ask for permission because it is not granted yet
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT);
-            View view = snackBar.getView();
-            DrawableCompat.setTint(view.getBackground(), getColor(R.color.colorPrimaryDark));
-            TextView text = view.findViewById(R.id.snackbar_text);
-            text.setTextColor(getColor(R.color.colorAccent));
             snackBar.show();
             return false;
         }
