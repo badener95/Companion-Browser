@@ -32,11 +32,13 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String startPage = "https://www.google.com/";
 
     private WebView webView;
+    private AppCompatImageView bottomBarShadow;
+    private RelativeLayout bottomBar;
     private ImageButton webViewControlButton;
     private ImageButton openDefaultAppButton;
     private AppCompatTextView textViewURL;
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
+        bottomBarShadow = findViewById(R.id.bottomBarShadow);
+        bottomBar = findViewById(R.id.bottomBar);
         webViewControlButton = findViewById(R.id.webViewControlButton);
         openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         textViewURL = findViewById(R.id.textViewURL);
@@ -178,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
+                bottomBarShadow.setVisibility(View.GONE);
+                bottomBar.setVisibility(View.GONE);
                 fullScreen.setVisibility(View.VISIBLE);
                 fullScreen.addView(view);
                 enableFullScreen();
@@ -188,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onHideCustomView() {
                 super.onHideCustomView();
+                bottomBarShadow.setVisibility(View.VISIBLE);
+                bottomBar.setVisibility(View.VISIBLE);
                 fullScreen.setVisibility(View.GONE);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                 isFullScreen = false;

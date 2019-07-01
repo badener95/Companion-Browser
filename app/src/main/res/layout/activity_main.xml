@@ -11,24 +11,24 @@
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBarContainer">
+        android:layout_above="@+id/bottomBar">
 
         <WebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <View
-            android:id="@+id/botoomBarContainerShadow"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bottom_bar_shadow" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/bottomBarShadow"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@id/bottomBar"
+        app:srcCompat="@drawable/bottom_bar_shadow" />
+
     <RelativeLayout
-        android:id="@+id/bottomBarContainer"
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
