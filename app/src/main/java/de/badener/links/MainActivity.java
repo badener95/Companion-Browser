@@ -284,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage(R.string.search_message);
         builder.setView(textInputLayout);
 
-        builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int whichButton) {
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, int i) {
                 if (textInput.getText() == null || textInput.getText().toString().equals(webView.getUrl())) {
                     dialog.dismiss(); // No input
                 } else {
@@ -303,8 +303,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int i) {
                 dialog.dismiss();
             }
         });
@@ -374,6 +374,10 @@ public class MainActivity extends AppCompatActivity {
                                 .setIntent(pinShortcutIntent)
                                 .build();
                         Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
+
+                    case R.id.action_clear_data:
+                        // Clear browsing data
+                        clearBrowsingData();
                         return true;
 
                     case R.id.action_close_window:
@@ -391,6 +395,30 @@ public class MainActivity extends AppCompatActivity {
         MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
         menuHelper.setForceShowIcon(true);
         menuHelper.show();
+    }
+
+    // Clear browsing data
+    private void clearBrowsingData() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(R.string.clear_data_title);
+        builder.setMessage(R.string.clear_data_message);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                webView.clearCache(true);
+                CookieManager.getInstance().removeAllCookies(null);
+                WebStorage.getInstance().deleteAllData();
+                webView.reload();
+                Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.clear_data_confirmation, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     // Show/hide "open default app button" in URL text field

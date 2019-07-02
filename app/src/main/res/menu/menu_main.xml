@@ -27,6 +27,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_clear_data"
+        android:icon="@drawable/ic_delete_outline"
+        android:title="@string/action_clear_data"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_close_window"
         android:icon="@drawable/ic_close_circle_outline"
         android:title="@string/action_close_window"
