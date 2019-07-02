@@ -21,6 +21,7 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.MimeTypeMap;
@@ -73,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoading = true;
     private boolean isAdBlockingEnabled = true;
+    private boolean isIncognitoMode = false;
     private boolean isFullScreen = false;
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,18 +92,10 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         fullScreen = findViewById(R.id.fullScreenContainer);
 
-        // WebView options
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
-        webView.getSettings().setDatabaseEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setGeolocationEnabled(false);
-        webView.getSettings().setUseWideViewPort(true);
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.getSettings().setDisplayZoomControls(false);
-        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
+        // Change WebView settings
+        changeWebViewSettings();
 
+        // Initialize ad blocking
         AdBlocking.init(MainActivity.this);
 
         // Handle "WebView control button" in URL text field
@@ -272,6 +265,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Change WebView settings
+    @SuppressLint("SetJavaScriptEnabled")
+    private void changeWebViewSettings() {
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAppCacheEnabled(!isIncognitoMode);
+        webView.getSettings().setDatabaseEnabled(!isIncognitoMode);
+        webView.getSettings().setDomStorageEnabled(!isIncognitoMode);
+        webView.getSettings().setGeolocationEnabled(false);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
+        CookieManager.getInstance().setAcceptCookie(!isIncognitoMode); // Enable/disable cookies
+    }
+
     // Search for a term or load a given URL
     private void searchURL() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -280,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
         textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
         textInput.setSingleLine(true);
         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        if (isIncognitoMode) textInput.setImeOptions(EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING);
         textInput.setText(webView.getUrl());
         textInput.setSelectAllOnFocus(true);
         textInputLayout.addView(textInput);
@@ -287,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setView(textInputLayout);
 
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int i) {
+            public void onClick(DialogInterface dialog, int i) {
                 if (textInput.getText() == null || textInput.getText().toString().equals(webView.getUrl())) {
                     dialog.dismiss(); // No input
                 } else {
@@ -319,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Show and handle the popup menu
     private void showPopupMenu() {
-        PopupMenu popup = new PopupMenu(MainActivity.this, menuButton);
+        final PopupMenu popup = new PopupMenu(MainActivity.this, menuButton);
         popup.inflate(R.menu.menu_main);
 
         // Change icon and text off "toggle ad blocking" option
@@ -328,6 +338,13 @@ public class MainActivity extends AppCompatActivity {
                 R.string.action_disable_ad_blocking : R.string.action_enable_ad_blocking));
         toggleAdBlocking.setIcon(getDrawable(isAdBlockingEnabled ?
                 R.drawable.ic_shield_outline : R.drawable.ic_shield_off_outline));
+
+        // Change icon and text off "toggle icognito mode" option
+        MenuItem toggleIncognitoMode = popup.getMenu().findItem(R.id.action_toggle_incognito_mode);
+        toggleIncognitoMode.setTitle(getString(isIncognitoMode ?
+                R.string.action_disable_incognito_mode : R.string.action_enable_incognito_mode));
+        toggleIncognitoMode.setIcon(getDrawable(isIncognitoMode ?
+                R.drawable.ic_sunglasses : R.drawable.ic_glasses));
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
@@ -350,6 +367,19 @@ public class MainActivity extends AppCompatActivity {
                             isAdBlockingEnabled = true;
                             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT).show();
                             webView.reload();
+                        }
+                        return true;
+
+                    case R.id.action_toggle_incognito_mode:
+                        // Toggle incognito mode
+                        if (isIncognitoMode) {
+                            isIncognitoMode = false;
+                            changeWebViewSettings();
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.icognito_mode_disabled, Snackbar.LENGTH_SHORT).show();
+                        } else {
+                            isIncognitoMode = true;
+                            changeWebViewSettings();
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.icognito_mode_enabled, Snackbar.LENGTH_SHORT).show();
                         }
                         return true;
 
@@ -382,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // Show icons in menu
-        MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
+        final MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
         menuHelper.setForceShowIcon(true);
         menuHelper.show();
     }
@@ -431,28 +461,26 @@ public class MainActivity extends AppCompatActivity {
 
     // Clear browsing data
     private void clearBrowsingData() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle(R.string.clear_data_title);
-        builder.setMessage(R.string.clear_data_message);
-
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                webView.clearCache(true);
-                CookieManager.getInstance().removeAllCookies(null);
-                WebStorage.getInstance().deleteAllData();
-                webView.reload();
-                Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.clear_data_confirmation, Snackbar.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(R.string.clear_data_title)
+                .setMessage(R.string.clear_data_message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        webView.clearCache(true);
+                        CookieManager.getInstance().removeAllCookies(null);
+                        WebStorage.getInstance().deleteAllData();
+                        webView.reload();
+                        Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.clear_data_confirmation, Snackbar.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     // Show/hide "open default app button" in URL text field

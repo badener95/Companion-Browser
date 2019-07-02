@@ -15,6 +15,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_toggle_incognito_mode"
+        android:icon="@drawable/ic_glasses"
+        android:title="@string/action_enable_incognito_mode"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_share_outline"
         android:title="@string/action_share"

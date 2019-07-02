@@ -7,12 +7,16 @@
     <string name="action_new_window">Neues Fenster</string>
     <string name="action_disable_ad_blocking">Werbeblocker deaktivieren</string>
     <string name="action_enable_ad_blocking">Werbeblocker aktivieren</string>
+    <string name="action_enable_incognito_mode">Inkognitomodus aktivieren</string>
+    <string name="action_disable_incognito_mode">Inkognitomodus deaktivieren</string>
     <string name="action_share">Teilen</string>
     <string name="action_add_shortcut">Verknüpfung hinzufügen</string>
     <string name="action_clear_data">Browser Daten löschen</string>
     <string name="action_close_window">Fenster schließen</string>
     <string name="ad_blocking_disabled">Werbeblocker deaktiviert</string>
     <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
+    <string name="icognito_mode_enabled">Inkognitomodus aktiviert</string>
+    <string name="icognito_mode_disabled">Inkognitomodus deaktiviert</string>
     <string name="clear_data_title">Browser Daten löschen</string>
     <string name="clear_data_message">Alle Browser Daten wie Cookies und Cache werden gelöscht</string>
     <string name="clear_data_confirmation">Browser Daten gelöscht</string>
