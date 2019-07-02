@@ -21,12 +21,14 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -92,11 +94,15 @@ public class MainActivity extends AppCompatActivity {
 
         // WebView options
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setGeolocationEnabled(false);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
 
         AdBlocking.init(MainActivity.this);
 
