@@ -404,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
         canvas.drawCircle(96, 96, 96, paintCircle);
 
         // Get first two characters of website title
-        String title = webView.getTitle().substring(0, 2);
+        String iconText = webView.getTitle().substring(0, 2);
         // Draw the first two characters on the background
         Paint paintText = new Paint();
         paintText.setAntiAlias(true);
@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
         paintText.setTextSize(112);
         paintText.setFakeBoldText(true);
         paintText.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(title, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+        canvas.drawText(iconText, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
         // Create icon
         Icon launcherIcon = Icon.createWithBitmap(icon);
 
@@ -421,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
         pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
         pinShortcutIntent.setAction(Intent.ACTION_MAIN);
         String shortcutTitle = webView.getTitle();
-        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
+        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, shortcutTitle)
                 .setShortLabel(shortcutTitle)
                 .setIcon(launcherIcon)
                 .setIntent(pinShortcutIntent)
