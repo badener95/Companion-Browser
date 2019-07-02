@@ -14,11 +14,11 @@
     <string name="action_close_window">Close window</string>
     <string name="ad_blocking_disabled">Ad blocking disabled</string>
     <string name="ad_blocking_enabled">Ad blocking enabled</string>
-    <string name="open_title">Choose app</string>
-    <string name="share_title">Share URL</string>
     <string name="clear_data_title">Clear browsing data</string>
     <string name="clear_data_message">All browsing data like cookies and cache will be cleared</string>
     <string name="clear_data_confirmation">Browsing data cleared</string>
+    <string name="chooser_share">Share URL</string>
+    <string name="chooser_open_app">Choose app</string>
     <string name="download_started">Download started</string>
     <string name="storage_permission_needed">Storage access needed to download files</string>
 </resources>

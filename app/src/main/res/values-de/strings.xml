@@ -13,11 +13,11 @@
     <string name="action_close_window">Fenster schließen</string>
     <string name="ad_blocking_disabled">Werbeblocker deaktiviert</string>
     <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
-    <string name="open_title">App wählen</string>
-    <string name="share_title">URL teilen</string>
     <string name="clear_data_title">Browser Daten löschen</string>
     <string name="clear_data_message">Alle Browser Daten wie Cookies und Cache werden gelöscht</string>
     <string name="clear_data_confirmation">Browser Daten gelöscht</string>
+    <string name="chooser_share">URL teilen</string>
+    <string name="chooser_open_app">App wählen</string>
     <string name="download_started">Download gestartet</string>
     <string name="storage_permission_needed">Speicherzugriff benötigt um Dateien zu downloaden</string>
 </resources>

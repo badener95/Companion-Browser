@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FrameLayout fullScreen;
 
-    private Icon launcherIcon;
     private boolean isLoading = true;
     private boolean isAdBlockingEnabled = true;
     private boolean isFullScreen = false;
@@ -157,8 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
                     DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Objects.requireNonNull(downloadManager).enqueue(request);
-                    Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.download_started, Snackbar.LENGTH_SHORT);
-                    snackBar.show();
+                    Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.download_started, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -174,8 +172,7 @@ public class MainActivity extends AppCompatActivity {
             // App was opened from launcher
             url = startPage;
         }
-
-        // Load either the start page (Google in this case) or the URL provided by an intent
+        // Load either the start page or the URL provided by an intent
         webView.loadUrl(url);
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -260,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                     PackageManager packageManager = MainActivity.this.getPackageManager();
                     List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL);
                     if (list.size() > 1) { // There is more than one app, show a chooser
-                        startActivity(Intent.createChooser(intent, getString(R.string.open_title)));
+                        startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
                         return true;
                     } else if (list.size() > 0) { // There is just one app
                         startActivity(intent);
@@ -280,7 +277,6 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
-
         textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
         textInput.setSingleLine(true);
         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
@@ -348,13 +344,11 @@ public class MainActivity extends AppCompatActivity {
                         // Toggle ad blocking
                         if (isAdBlockingEnabled) {
                             isAdBlockingEnabled = false;
-                            Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT);
-                            snackBar.show();
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT).show();
                             webView.reload();
                         } else {
                             isAdBlockingEnabled = true;
-                            Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT);
-                            snackBar.show();
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT).show();
                             webView.reload();
                         }
                         return true;
@@ -364,22 +358,13 @@ public class MainActivity extends AppCompatActivity {
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
                         shareIntent.setType("text/plain");
                         shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
-                        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_title)));
+                        startActivity(Intent.createChooser(shareIntent, getString(R.string.chooser_share)));
                         return true;
 
                     case R.id.action_add_shortcut:
                         // Pin website shortcut to launcher
-                        Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
-                        pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
-                        pinShortcutIntent.setAction(Intent.ACTION_MAIN);
-                        getLauncherIcon();
-                        String title = webView.getTitle();
-                        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
-                                .setShortLabel(title)
-                                .setIcon(launcherIcon)
-                                .setIntent(pinShortcutIntent)
-                                .build();
-                        Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
+                        pinShortcut();
+                        return true;
 
                     case R.id.action_clear_data:
                         // Clear browsing data
@@ -396,11 +381,52 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         // Show icons in menu
         MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
         menuHelper.setForceShowIcon(true);
         menuHelper.show();
+    }
+
+    // Pin website shortcut to launcher
+    private void pinShortcut() {
+        // Create a launcher icon for the shortcut first
+        String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
+                "#00bfa5", "#00c853", "#ffd600", "#ff6d00"};
+        // Get a random color from the ones provide by the array
+        String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
+        // Draw a round background with the random color
+        Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(icon);
+        Paint paintCircle = new Paint();
+        paintCircle.setAntiAlias(true);
+        paintCircle.setColor(Color.parseColor(randomColor));
+        paintCircle.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(96, 96, 96, paintCircle);
+
+        // Get first two characters of website title
+        String title = webView.getTitle().substring(0, 2);
+        // Draw the first two characters on the background
+        Paint paintText = new Paint();
+        paintText.setAntiAlias(true);
+        paintText.setColor(Color.WHITE);
+        paintText.setTextSize(112);
+        paintText.setFakeBoldText(true);
+        paintText.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(title, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+        // Create icon
+        Icon launcherIcon = Icon.createWithBitmap(icon);
+
+        // Create the shortcut
+        Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
+        pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
+        pinShortcutIntent.setAction(Intent.ACTION_MAIN);
+        String shortcutTitle = webView.getTitle();
+        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, title)
+                .setShortLabel(shortcutTitle)
+                .setIcon(launcherIcon)
+                .setIntent(pinShortcutIntent)
+                .build();
+        Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
     }
 
     // Clear browsing data
@@ -408,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle(R.string.clear_data_title);
         builder.setMessage(R.string.clear_data_message);
+
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
@@ -418,6 +445,7 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.clear_data_confirmation, Snackbar.LENGTH_SHORT).show();
             }
         });
+
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
@@ -472,39 +500,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Create a launcher icon for shortcuts
-    private void getLauncherIcon() {
-
-        // Get a random color from the ones provide by the array
-        String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
-                "#00bfA5", "#00c853", "#ffd600", "#ff6d00"};
-        String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
-
-        // Draw a round background with the random color
-        Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(icon);
-        Paint paintCircle = new Paint();
-        paintCircle.setAntiAlias(true);
-        paintCircle.setColor(Color.parseColor(randomColor));
-        paintCircle.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(96, 96, 96, paintCircle);
-
-        // Get first two characters of website title
-        String title = webView.getTitle().substring(0, 2);
-
-        // Draw the first two characters on the background
-        Paint paintText = new Paint();
-        paintText.setAntiAlias(true);
-        paintText.setColor(Color.WHITE);
-        paintText.setTextSize(112);
-        paintText.setFakeBoldText(true);
-        paintText.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(title, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
-
-        // Create icon
-        launcherIcon = Icon.createWithBitmap(icon);
-    }
-
     // Check if permission is granted to write on storage for downloading files
     private boolean isStoragePermissionGranted() {
         if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -512,8 +507,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Ask for permission because it is not granted yet
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            Snackbar snackBar = Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT);
-            snackBar.show();
+            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT).show();
             return false;
         }
     }
