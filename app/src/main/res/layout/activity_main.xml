@@ -72,10 +72,13 @@
                 android:autoSizeTextType="uniform"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
                 android:padding="8dp"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 

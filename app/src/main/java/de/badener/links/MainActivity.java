@@ -7,21 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.MimeTypeMap;
@@ -45,6 +42,11 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
+import androidx.core.view.inputmethod.EditorInfoCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -138,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
         // Handle downloads
         webView.setDownloadListener(new DownloadListener() {
             @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+            public void onDownloadStart(String url, String userAgent, String contentDisposition,
+                                        String mimetype, long contentLength) {
                 // Check if storage permission is granted and start download if applicable
                 if (isStoragePermissionGranted()) {
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -248,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!URLUtil.isValidUrl(url)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     PackageManager packageManager = MainActivity.this.getPackageManager();
-                    List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+                    List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
                     if (list.size() > 1) { // There is more than one app, show a chooser
                         startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
                         return true;
@@ -286,10 +289,12 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
         final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
-        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0, getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
+        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0,
+                getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
         textInput.setSingleLine(true);
         textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        if (isIncognitoMode) textInput.setImeOptions(EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING);
+        if (isIncognitoMode)
+            textInput.setImeOptions(EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING);
         textInput.setText(webView.getUrl());
         textInput.setSelectAllOnFocus(true);
         textInputLayout.addView(textInput);
@@ -419,44 +424,49 @@ public class MainActivity extends AppCompatActivity {
 
     // Pin website shortcut to launcher
     private void pinShortcut() {
-        // Create a launcher icon for the shortcut first
-        String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
-                "#00bfa5", "#00c853", "#ffd600", "#ff6d00"};
-        // Get a random color from the ones provide by the array
-        String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
-        // Draw a round background with the random color
-        Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(icon);
-        Paint paintCircle = new Paint();
-        paintCircle.setAntiAlias(true);
-        paintCircle.setColor(Color.parseColor(randomColor));
-        paintCircle.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(96, 96, 96, paintCircle);
+        // Check if launcher shortcuts are supported
+        if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
+            // Create a launcher icon for the shortcut first
+            String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
+                    "#00bfa5", "#00c853", "#ffd600", "#ff6d00"};
+            // Get a random color from the ones provide by the array
+            String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
+            // Draw a round background with the random color
+            Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(icon);
+            Paint paintCircle = new Paint();
+            paintCircle.setAntiAlias(true);
+            paintCircle.setColor(Color.parseColor(randomColor));
+            paintCircle.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(96, 96, 96, paintCircle);
 
-        // Get first two characters of website title
-        String iconText = webView.getTitle().substring(0, 2);
-        // Draw the first two characters on the background
-        Paint paintText = new Paint();
-        paintText.setAntiAlias(true);
-        paintText.setColor(Color.WHITE);
-        paintText.setTextSize(112);
-        paintText.setFakeBoldText(true);
-        paintText.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(iconText, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
-        // Create icon
-        Icon launcherIcon = Icon.createWithBitmap(icon);
+            // Get first two characters of website title
+            String iconText = webView.getTitle().substring(0, 2);
+            // Draw the first two characters on the background
+            Paint paintText = new Paint();
+            paintText.setAntiAlias(true);
+            paintText.setColor(Color.WHITE);
+            paintText.setTextSize(112);
+            paintText.setFakeBoldText(true);
+            paintText.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(iconText, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+            // Create icon
+            IconCompat launcherIcon = IconCompat.createWithBitmap(icon);
 
-        // Create the shortcut
-        Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
-        pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
-        pinShortcutIntent.setAction(Intent.ACTION_MAIN);
-        String shortcutTitle = webView.getTitle();
-        ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(MainActivity.this, shortcutTitle)
-                .setShortLabel(shortcutTitle)
-                .setIcon(launcherIcon)
-                .setIntent(pinShortcutIntent)
-                .build();
-        Objects.requireNonNull(getSystemService(ShortcutManager.class)).requestPinShortcut(shortcutInfo, null);
+            // Create the shortcut
+            Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
+            pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
+            pinShortcutIntent.setAction(Intent.ACTION_MAIN);
+            String shortcutTitle = webView.getTitle();
+            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this, shortcutTitle)
+                    .setShortLabel(shortcutTitle)
+                    .setIcon(launcherIcon)
+                    .setIntent(pinShortcutIntent)
+                    .build();
+            ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
+        } else {
+            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     // Clear browsing data
@@ -523,19 +533,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onUserLeaveHint() {
         PackageManager packageManager = MainActivity.this.getPackageManager();
-        if (isFullScreen && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+        if (isFullScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
             enterPictureInPictureMode();
         }
     }
 
     // Check if permission is granted to write on storage for downloading files
     private boolean isStoragePermissionGranted() {
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true; // Permission is granted
         } else {
             // Ask for permission because it is not granted yet
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             return false;
         }
     }
