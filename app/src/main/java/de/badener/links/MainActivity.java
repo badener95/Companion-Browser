@@ -36,8 +36,6 @@ import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
@@ -334,24 +332,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Show and handle the popup menu
     private void showPopupMenu() {
-        final PopupMenu popup = new PopupMenu(MainActivity.this, menuButton);
-        popup.inflate(R.menu.menu_main);
-
-        // Change icon and text off "toggle ad blocking" option
-        MenuItem toggleAdBlocking = popup.getMenu().findItem(R.id.action_toggle_ad_blocking);
-        toggleAdBlocking.setTitle(getString(isAdBlockingEnabled ?
-                R.string.action_disable_ad_blocking : R.string.action_enable_ad_blocking));
-        toggleAdBlocking.setIcon(getDrawable(isAdBlockingEnabled ?
-                R.drawable.ic_shield_outline : R.drawable.ic_shield_off_outline));
-
-        // Change icon and text off "toggle icognito mode" option
-        MenuItem toggleIncognitoMode = popup.getMenu().findItem(R.id.action_toggle_incognito_mode);
-        toggleIncognitoMode.setTitle(getString(isIncognitoMode ?
-                R.string.action_disable_incognito_mode : R.string.action_enable_incognito_mode));
-        toggleIncognitoMode.setIcon(getDrawable(isIncognitoMode ?
-                R.drawable.ic_sunglasses : R.drawable.ic_glasses));
-
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuButton);
+        popupMenu.inflate(R.menu.menu_main);
+        popupMenu.getMenu().findItem(R.id.action_toggle_incognito_mode).setChecked(isIncognitoMode);
+        popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
 
@@ -362,30 +347,20 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(newWindowIntent);
                         return true;
 
-                    case R.id.action_toggle_ad_blocking:
-                        // Toggle ad blocking
-                        if (isAdBlockingEnabled) {
-                            isAdBlockingEnabled = false;
-                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT).show();
-                            webView.reload();
-                        } else {
-                            isAdBlockingEnabled = true;
-                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT).show();
-                            webView.reload();
-                        }
-                        return true;
-
                     case R.id.action_toggle_incognito_mode:
                         // Toggle incognito mode
                         if (isIncognitoMode) {
                             isIncognitoMode = false;
                             changeWebViewSettings();
                             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.icognito_mode_disabled, Snackbar.LENGTH_SHORT).show();
+                            webView.reload();
                         } else {
                             isIncognitoMode = true;
                             changeWebViewSettings();
                             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.icognito_mode_enabled, Snackbar.LENGTH_SHORT).show();
+                            webView.reload();
                         }
+                        item.setChecked(isIncognitoMode);
                         return true;
 
                     case R.id.action_share:
@@ -399,6 +374,20 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_add_shortcut:
                         // Pin website shortcut to launcher
                         pinShortcut();
+                        return true;
+
+                    case R.id.action_toggle_ad_blocking:
+                        // Toggle ad blocking
+                        if (isAdBlockingEnabled) {
+                            isAdBlockingEnabled = false;
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT).show();
+                            webView.reload();
+                        } else {
+                            isAdBlockingEnabled = true;
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT).show();
+                            webView.reload();
+                        }
+                        item.setChecked(isAdBlockingEnabled);
                         return true;
 
                     case R.id.action_clear_data:
@@ -416,10 +405,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        // Show icons in menu
-        final MenuPopupHelper menuHelper = new MenuPopupHelper(MainActivity.this, (MenuBuilder) popup.getMenu(), menuButton);
-        menuHelper.setForceShowIcon(true);
-        menuHelper.show();
+        popupMenu.show();
     }
 
     // Pin website shortcut to launcher
@@ -472,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
     // Clear browsing data
     private void clearBrowsingData() {
         new AlertDialog.Builder(MainActivity.this)
-                .setTitle(R.string.clear_data_title)
+                .setTitle(R.string.action_clear_data)
                 .setMessage(R.string.clear_data_message)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override

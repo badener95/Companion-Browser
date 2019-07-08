@@ -1,47 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/action_new_window"
-        android:icon="@drawable/ic_add_circle_outline"
-        android:title="@string/action_new_window"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_toggle_ad_blocking"
-        android:icon="@drawable/ic_shield_outline"
-        android:title="@string/action_disable_ad_blocking"
-        app:showAsAction="never" />
+        android:title="@string/action_new_window" />
 
     <item
         android:id="@+id/action_toggle_incognito_mode"
-        android:icon="@drawable/ic_glasses"
-        android:title="@string/action_enable_incognito_mode"
-        app:showAsAction="never" />
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/action_toggle_incognito_mode" />
 
     <item
         android:id="@+id/action_share"
-        android:icon="@drawable/ic_share_outline"
-        android:title="@string/action_share"
-        app:showAsAction="never" />
+        android:title="@string/action_share" />
 
     <item
         android:id="@+id/action_add_shortcut"
-        android:icon="@drawable/ic_pin_outline"
-        android:title="@string/action_add_shortcut"
-        app:showAsAction="never" />
+        android:title="@string/action_add_shortcut" />
+
+    <item
+        android:id="@+id/action_toggle_ad_blocking"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/action_toggle_ad_blocking" />
 
     <item
         android:id="@+id/action_clear_data"
-        android:icon="@drawable/ic_delete_outline"
-        android:title="@string/action_clear_data"
-        app:showAsAction="never" />
+        android:title="@string/action_clear_data" />
 
     <item
         android:id="@+id/action_close_window"
-        android:icon="@drawable/ic_close_circle_outline"
-        android:title="@string/action_close_window"
-        app:showAsAction="never" />
+        android:title="@string/action_close_window" />
 
 </menu>
