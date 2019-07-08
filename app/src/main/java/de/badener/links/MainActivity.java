@@ -15,10 +15,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.MimeTypeMap;
@@ -33,11 +34,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout bottomBar;
     private ImageButton webViewControlButton;
     private ImageButton openDefaultAppButton;
-    private AppCompatTextView textViewURL;
+    private TextInputEditText searchTextInput;
     private ImageButton menuButton;
     private ProgressBar progressBar;
     private FrameLayout fullScreen;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         bottomBar = findViewById(R.id.bottomBar);
         webViewControlButton = findViewById(R.id.webViewControlButton);
         openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
-        textViewURL = findViewById(R.id.textViewURL);
+        searchTextInput = findViewById(R.id.searchTextInput);
         menuButton = findViewById(R.id.menuButton);
         progressBar = findViewById(R.id.progressBar);
         fullScreen = findViewById(R.id.fullScreenContainer);
@@ -119,11 +120,59 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle clicks on the URL text field
-        textViewURL.setOnClickListener(new View.OnClickListener() {
+        // Handle clicks on the search field
+        searchTextInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchURL();
+                if (isIncognitoMode)
+                    searchTextInput.setImeOptions(EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING);
+            }
+        });
+
+        // Handle focus changes of the search field
+        searchTextInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    webViewControlButton.setVisibility(View.GONE);
+                    openDefaultAppButton.setVisibility(View.GONE);
+                    menuButton.setVisibility(View.GONE);
+                } else {
+                    webViewControlButton.setVisibility(View.VISIBLE);
+                    showHideOpenDefaultAppButton();
+                    searchTextInput.setText(webView.getUrl());
+                    menuButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        // Handle the search button shown in the keyboard
+        searchTextInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    if (Objects.requireNonNull(searchTextInput.getText()).toString().isEmpty() ||
+                            searchTextInput.getText().toString().equals(webView.getUrl())) {
+                        searchTextInput.setText(webView.getUrl());
+                        searchTextInput.clearFocus();
+                    } else {
+                        String text = searchTextInput.getText().toString();
+                        String url;
+                        if (URLUtil.isValidUrl(text)) { // Input is a valid URL
+                            url = text;
+                        } else if (text.contains(" ") || !text.contains(".")) { // Input is obviously no URL, start Google search
+                            url = "https://www.google.com/search?q=" + text;
+                        } else {
+                            url = URLUtil.guessUrl(text); // Try to guess URL
+                        }
+                        searchTextInput.clearFocus();
+                        webView.loadUrl(url);
+                    }
+                    searchTextInput.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) MainActivity.this.getSystemService(INPUT_METHOD_SERVICE);
+                    Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -228,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 progressBar.setVisibility(View.VISIBLE);
-                textViewURL.setText(webView.getUrl());
+                searchTextInput.setText(webView.getUrl());
                 webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
                 showHideOpenDefaultAppButton();
                 isLoading = true;
@@ -280,54 +329,6 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
         CookieManager.getInstance().setAcceptCookie(!isIncognitoMode); // Enable/disable cookies
-    }
-
-    // Search for a term or load a given URL
-    private void searchURL() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
-        final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
-        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0,
-                getResources().getDimensionPixelOffset(R.dimen.text_input_layout_padding), 0);
-        textInput.setSingleLine(true);
-        textInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        if (isIncognitoMode)
-            textInput.setImeOptions(EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING);
-        textInput.setText(webView.getUrl());
-        textInput.setSelectAllOnFocus(true);
-        textInputLayout.addView(textInput);
-        builder.setMessage(R.string.search_message);
-        builder.setView(textInputLayout);
-
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int i) {
-                if (textInput.getText() == null || textInput.getText().toString().equals(webView.getUrl())) {
-                    dialog.dismiss(); // No input
-                } else {
-                    String text = textInput.getText().toString();
-                    String url;
-                    if (URLUtil.isValidUrl(text)) { // Input is a valid URL
-                        url = text;
-                    } else if (text.contains(" ") || !text.contains(".")) { // Input is obviously no URL, start Google search
-                        url = "https://www.google.com/search?q=" + text;
-                    } else {
-                        url = URLUtil.guessUrl(text); // Try to guess URL
-                    }
-                    webView.loadUrl(url);
-                }
-            }
-        });
-
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int i) {
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        // Show keyboard when alert dialog is shown
-        textInput.requestFocus();
-        Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
     }
 
     // Show and handle the popup menu
@@ -542,7 +543,9 @@ public class MainActivity extends AppCompatActivity {
     // Prevent the back button from closing the app
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
+        if (searchTextInput.hasFocus()) {
+            searchTextInput.clearFocus();
+        } else if (webView.canGoBack()) {
             webView.goBack();
         } else {
             finishAndRemoveTask();
