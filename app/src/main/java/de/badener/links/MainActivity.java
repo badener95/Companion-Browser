@@ -15,6 +15,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +47,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
-import androidx.core.view.inputmethod.EditorInfoCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -62,6 +63,8 @@ import de.badener.links.utils.AdBlocking;
 public class MainActivity extends AppCompatActivity {
 
     private static final String startPage = "https://www.google.com/";
+    private String shortcutTitle;
+    private IconCompat shortcutIcon;
 
     private WebView webView;
     private AppCompatImageView bottomBarShadow;
@@ -117,15 +120,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
                 startActivity(intent);
-            }
-        });
-
-        // Handle clicks on the search field
-        searchTextInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isIncognitoMode)
-                    searchTextInput.setImeOptions(EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING);
             }
         });
 
@@ -413,47 +407,102 @@ public class MainActivity extends AppCompatActivity {
     private void pinShortcut() {
         // Check if launcher shortcuts are supported
         if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
-            // Create a launcher icon for the shortcut first
-            String[] colorArray = {"#d50000", "#c51162", "#aa00ff", "#2962ff",
-                    "#00bfa5", "#00c853", "#ffd600", "#ff6d00"};
-            // Get a random color from the ones provide by the array
-            String randomColor = (colorArray[new Random().nextInt(colorArray.length)]);
-            // Draw a round background with the random color
-            Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(icon);
-            Paint paintCircle = new Paint();
-            paintCircle.setAntiAlias(true);
-            paintCircle.setColor(Color.parseColor(randomColor));
-            paintCircle.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(96, 96, 96, paintCircle);
+            // Ask for the shortcut title first
+            final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
+            final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
+            textInput.setText(webView.getTitle());
+            textInput.setSingleLine(true);
+            textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0,
+                    getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0);
+            textInputLayout.addView(textInput);
+            builder.setTitle(R.string.action_add_shortcut);
+            builder.setView(textInputLayout);
 
-            // Get first two characters of website title
-            String iconText = webView.getTitle().substring(0, 2);
-            // Draw the first two characters on the background
-            Paint paintText = new Paint();
-            paintText.setAntiAlias(true);
-            paintText.setColor(Color.WHITE);
-            paintText.setTextSize(112);
-            paintText.setFakeBoldText(true);
-            paintText.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(iconText, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
-            // Create icon
-            IconCompat launcherIcon = IconCompat.createWithBitmap(icon);
+            builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int i) {
+                    shortcutTitle = Objects.requireNonNull(textInput.getText()).toString(); // Get the name for the shortcut
+                    createShortcutIcon(); // Create icon for the shortcut
+                    // Create the shortcut
+                    Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
+                    pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
+                    pinShortcutIntent.setAction(Intent.ACTION_MAIN);
+                    ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this,
+                            shortcutTitle)
+                            .setShortLabel(shortcutTitle)
+                            .setIcon(shortcutIcon)
+                            .setIntent(pinShortcutIntent)
+                            .build();
+                    ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
+                }
+            });
+            // Cancel creating shortcut
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int i) {
+                    dialog.dismiss();
+                }
+            });
+            final AlertDialog dialog = builder.create();
+            dialog.show();
 
-            // Create the shortcut
-            Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
-            pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
-            pinShortcutIntent.setAction(Intent.ACTION_MAIN);
-            String shortcutTitle = webView.getTitle();
-            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this, shortcutTitle)
-                    .setShortLabel(shortcutTitle)
-                    .setIcon(launcherIcon)
-                    .setIntent(pinShortcutIntent)
-                    .build();
-            ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
+            // Check if a title is set
+            textInput.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if (Objects.requireNonNull(textInput.getText()).toString().length() == 0)
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if (Objects.requireNonNull(textInput.getText()).toString().length() >= 1) {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    } else {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                }
+            });
         } else {
+            // Creating shortcuts is not supported
             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    // Create a launcher icon for shortcuts
+    private void createShortcutIcon() {
+        // Define some colors
+        String[] colors = {"#d50000", "#c51162", "#aa00ff", "#2962ff", "#00bfa5", "#00c853", "#ffd600", "#ff6d00"};
+        // Get a random color from the ones provide by the array
+        String randomColor = (colors[new Random().nextInt(colors.length)]);
+        // Draw a round background with the random color
+        Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(icon);
+        Paint paintCircle = new Paint();
+        paintCircle.setAntiAlias(true);
+        paintCircle.setColor(Color.parseColor(randomColor));
+        paintCircle.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(96, 96, 96, paintCircle);
+        // Get first one or two characters of website title
+        String iconText;
+        if (shortcutTitle.length() >= 2) {
+            iconText = shortcutTitle.substring(0, 2);
+        } else {
+            iconText = shortcutTitle.substring(0, 1);
+        }
+        // Draw the first characters on the background
+        Paint paintText = new Paint();
+        paintText.setAntiAlias(true);
+        paintText.setColor(Color.WHITE);
+        paintText.setTextSize(92);
+        paintText.setFakeBoldText(true);
+        paintText.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(iconText, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+        // Create icon
+        shortcutIcon = IconCompat.createWithBitmap(icon);
     }
 
     // Clear browsing data

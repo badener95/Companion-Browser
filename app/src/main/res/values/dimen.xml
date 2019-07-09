@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="text_input_layout_padding">19dp</dimen>
+    <dimen name="alert_dialog_padding">19dp</dimen>
 </resources>

@@ -21,4 +21,5 @@
     <string name="download_started">Download gestartet</string>
     <string name="storage_permission_needed">Speicherzugriff benötigt um Dateien zu downloaden</string>
     <string name="shortcuts_not_supported">Dein Launcher unterstützt keine Verknüpfungen</string>
+    <string name="add">Hinzufügen</string>
 </resources>
