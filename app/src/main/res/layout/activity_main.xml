@@ -67,6 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignWithParentIfMissing="true"
+                android:layout_toStartOf="@+id/clearSearchTextButton"
                 android:layout_toEndOf="@+id/openDefaultAppButton"
                 android:background="@android:color/transparent"
                 android:clickable="true"
@@ -81,6 +82,17 @@
                 android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/clearSearchTextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/clear_search_text_button"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_cancel" />
 
         </RelativeLayout>
 

@@ -3,6 +3,7 @@
     <string name="app_name" translatable="false">Links</string>
     <string name="webview_control_button">Reload/cancel</string>
     <string name="open_default_app_button">Open in default app</string>
+    <string name="clear_search_text_button">Clear input</string>
     <string name="menu_button">Menu</string>
     <string name="action_new_window">New window</string>
     <string name="action_toggle_incognito_mode">Incognito mode</string>

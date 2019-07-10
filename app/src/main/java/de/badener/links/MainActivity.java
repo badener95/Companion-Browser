@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton webViewControlButton;
     private ImageButton openDefaultAppButton;
     private TextInputEditText searchTextInput;
+    private ImageButton clearSearchTextButton;
     private ImageButton menuButton;
     private ProgressBar progressBar;
     private FrameLayout fullScreen;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         webViewControlButton = findViewById(R.id.webViewControlButton);
         openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         searchTextInput = findViewById(R.id.searchTextInput);
+        clearSearchTextButton = findViewById(R.id.clearSearchTextButton);
         menuButton = findViewById(R.id.menuButton);
         progressBar = findViewById(R.id.progressBar);
         fullScreen = findViewById(R.id.fullScreenContainer);
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize ad blocking
         AdBlocking.init(MainActivity.this);
 
-        // Handle "WebView control button" in URL text field
+        // Handle "WebView control button" in the search field
         webViewControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle "open default app button" in URL text field
+        // Handle "open default app button" in the search field
         openDefaultAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,11 +131,13 @@ public class MainActivity extends AppCompatActivity {
                 if (hasFocus) {
                     webViewControlButton.setVisibility(View.GONE);
                     openDefaultAppButton.setVisibility(View.GONE);
+                    clearSearchTextButton.setVisibility(View.VISIBLE);
                     menuButton.setVisibility(View.GONE);
                 } else {
                     webViewControlButton.setVisibility(View.VISIBLE);
                     showHideOpenDefaultAppButton();
                     searchTextInput.setText(webView.getUrl());
+                    clearSearchTextButton.setVisibility(View.GONE);
                     menuButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -170,6 +174,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Handle "clear search text button" in the search field
+        clearSearchTextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Objects.requireNonNull(searchTextInput.getText()).clear();
+            }
+        });
+
         // Handle "menu button" in bottom bar
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
                 // Check if storage permission is granted and start download if applicable
                 if (isStoragePermissionGranted()) {
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                    request.allowScanningByMediaScanner();
                     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                     String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
