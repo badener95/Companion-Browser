@@ -215,10 +215,20 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebChromeClient(new WebChromeClient() {
 
-            // Update the progress bar
+            // Update the progress bar and other ui elements according to WebView progress
             @Override
             public void onProgressChanged(WebView view, int progress) {
                 progressBar.setProgress(progress);
+                if (progress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                    webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_reload));
+                    isLoading = false;
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    searchTextInput.setText(webView.getUrl());
+                    webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
+                    isLoading = true;
+                }
             }
 
             // Enter fullscreen
@@ -263,23 +273,6 @@ public class MainActivity extends AppCompatActivity {
                     return ad ? AdBlocking.createEmptyResource() : super.shouldInterceptRequest(view, request);
                 }
                 return super.shouldInterceptRequest(view, request);
-            }
-
-            // Show the progress bar and update the URL in the URL text field
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                progressBar.setVisibility(View.VISIBLE);
-                searchTextInput.setText(webView.getUrl());
-                webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
-                isLoading = true;
-            }
-
-            // Hide the progress bar
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                progressBar.setVisibility(View.GONE);
-                webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_reload));
-                isLoading = false;
             }
 
             // Handle external links
