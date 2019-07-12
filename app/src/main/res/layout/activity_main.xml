@@ -20,13 +20,6 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/bottomBarShadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@id/bottomBar"
-        app:srcCompat="@drawable/bottom_bar_shadow" />
-
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -51,24 +44,13 @@
                 android:contentDescription="@string/webview_control_button"
                 app:srcCompat="@drawable/ic_cancel" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/openDefaultAppButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@+id/webViewControlButton"
-                android:adjustViewBounds="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/open_default_app_button"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_open_in_app" />
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/searchTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_toStartOf="@+id/clearSearchTextButton"
-                android:layout_toEndOf="@+id/openDefaultAppButton"
+                android:layout_toEndOf="@+id/webViewControlButton"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"

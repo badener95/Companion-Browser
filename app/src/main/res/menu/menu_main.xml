@@ -6,12 +6,6 @@
         android:title="@string/action_new_window" />
 
     <item
-        android:id="@+id/action_toggle_incognito_mode"
-        android:checkable="true"
-        android:checked="false"
-        android:title="@string/action_toggle_incognito_mode" />
-
-    <item
         android:id="@+id/action_share"
         android:title="@string/action_share" />
 

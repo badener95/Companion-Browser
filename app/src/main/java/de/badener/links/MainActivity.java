@@ -12,7 +12,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -40,7 +39,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -67,10 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private IconCompat shortcutIcon;
 
     private WebView webView;
-    private AppCompatImageView bottomBarShadow;
     private RelativeLayout bottomBar;
     private ImageButton webViewControlButton;
-    private ImageButton openDefaultAppButton;
     private TextInputEditText searchTextInput;
     private ImageButton clearSearchTextButton;
     private ImageButton menuButton;
@@ -79,19 +75,17 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoading = true;
     private boolean isAdBlockingEnabled = true;
-    private boolean isIncognitoMode = false;
     private boolean isFullScreen = false;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        bottomBarShadow = findViewById(R.id.bottomBarShadow);
         bottomBar = findViewById(R.id.bottomBar);
         webViewControlButton = findViewById(R.id.webViewControlButton);
-        openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         searchTextInput = findViewById(R.id.searchTextInput);
         clearSearchTextButton = findViewById(R.id.clearSearchTextButton);
         menuButton = findViewById(R.id.menuButton);
@@ -99,10 +93,19 @@ public class MainActivity extends AppCompatActivity {
         fullScreen = findViewById(R.id.fullScreenContainer);
 
         // Change WebView settings
-        changeWebViewSettings();
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setDatabaseEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setGeolocationEnabled(false);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
 
         // Initialize ad blocking
-        AdBlocking.init(MainActivity.this);
+        AdBlocking.init(this);
 
         // Handle "WebView control button" in the search field
         webViewControlButton.setOnClickListener(new View.OnClickListener() {
@@ -116,26 +119,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle "open default app button" in the search field
-        openDefaultAppButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
-                startActivity(intent);
-            }
-        });
-
         // Handle focus changes of the search field
         searchTextInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View view, boolean hasFocus) {
                 if (hasFocus) {
                     webViewControlButton.setVisibility(View.GONE);
-                    openDefaultAppButton.setVisibility(View.GONE);
                     clearSearchTextButton.setVisibility(View.VISIBLE);
                     menuButton.setVisibility(View.GONE);
                 } else {
                     webViewControlButton.setVisibility(View.VISIBLE);
-                    showHideOpenDefaultAppButton();
                     searchTextInput.setText(webView.getUrl());
                     clearSearchTextButton.setVisibility(View.GONE);
                     menuButton.setVisibility(View.VISIBLE);
@@ -166,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         webView.loadUrl(url);
                     }
                     searchTextInput.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) MainActivity.this.getSystemService(INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     return true;
                 }
@@ -235,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
-                bottomBarShadow.setVisibility(View.GONE);
                 bottomBar.setVisibility(View.GONE);
                 fullScreen.setVisibility(View.VISIBLE);
                 fullScreen.addView(view);
@@ -247,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onHideCustomView() {
                 super.onHideCustomView();
-                bottomBarShadow.setVisibility(View.VISIBLE);
                 bottomBar.setVisibility(View.VISIBLE);
                 fullScreen.setVisibility(View.GONE);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
@@ -273,9 +263,8 @@ public class MainActivity extends AppCompatActivity {
                         ad = loadedUrls.get(url);
                     }
                     return ad ? AdBlocking.createEmptyResource() : super.shouldInterceptRequest(view, request);
-                } else {
-                    return super.shouldInterceptRequest(view, request);
                 }
+                return super.shouldInterceptRequest(view, request);
             }
 
             // Show the progress bar and update the URL in the URL text field
@@ -284,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 searchTextInput.setText(webView.getUrl());
                 webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
-                showHideOpenDefaultAppButton();
                 isLoading = true;
             }
 
@@ -302,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 String url = request.getUrl().toString();
                 if (!URLUtil.isValidUrl(url)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    PackageManager packageManager = MainActivity.this.getPackageManager();
+                    PackageManager packageManager = getPackageManager();
                     List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
                     if (list.size() > 1) { // There is more than one app, show a chooser
                         startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
@@ -320,27 +308,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Change WebView settings
-    @SuppressLint("SetJavaScriptEnabled")
-    private void changeWebViewSettings() {
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(!isIncognitoMode);
-        webView.getSettings().setDatabaseEnabled(!isIncognitoMode);
-        webView.getSettings().setDomStorageEnabled(!isIncognitoMode);
-        webView.getSettings().setGeolocationEnabled(false);
-        webView.getSettings().setUseWideViewPort(true);
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.getSettings().setDisplayZoomControls(false);
-        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
-        CookieManager.getInstance().setAcceptCookie(!isIncognitoMode); // Enable/disable cookies
-    }
-
     // Show and handle the popup menu
     private void showPopupMenu() {
-        PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuButton);
+        final PopupMenu popupMenu = new PopupMenu(this, menuButton);
         popupMenu.inflate(R.menu.menu_main);
-        popupMenu.getMenu().findItem(R.id.action_toggle_incognito_mode).setChecked(isIncognitoMode);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
@@ -351,22 +322,6 @@ public class MainActivity extends AppCompatActivity {
                         Intent newWindowIntent = new Intent(MainActivity.this, MainActivity.class);
                         newWindowIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                         startActivity(newWindowIntent);
-                        return true;
-
-                    case R.id.action_toggle_incognito_mode:
-                        // Toggle incognito mode
-                        if (isIncognitoMode) {
-                            isIncognitoMode = false;
-                            changeWebViewSettings();
-                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.icognito_mode_disabled, Snackbar.LENGTH_SHORT).show();
-                            webView.reload();
-                        } else {
-                            isIncognitoMode = true;
-                            changeWebViewSettings();
-                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.icognito_mode_enabled, Snackbar.LENGTH_SHORT).show();
-                            webView.reload();
-                        }
-                        item.setChecked(isIncognitoMode);
                         return true;
 
                     case R.id.action_share:
@@ -385,15 +340,13 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_toggle_ad_blocking:
                         // Toggle ad blocking
                         if (isAdBlockingEnabled) {
-                            isAdBlockingEnabled = false;
                             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_disabled, Snackbar.LENGTH_SHORT).show();
-                            webView.reload();
                         } else {
-                            isAdBlockingEnabled = true;
                             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.ad_blocking_enabled, Snackbar.LENGTH_SHORT).show();
-                            webView.reload();
                         }
+                        isAdBlockingEnabled = !isAdBlockingEnabled;
                         item.setChecked(isAdBlockingEnabled);
+                        webView.reload();
                         return true;
 
                     case R.id.action_clear_data:
@@ -518,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Clear browsing data
     private void clearBrowsingData() {
-        new AlertDialog.Builder(MainActivity.this)
+        new AlertDialog.Builder(this)
                 .setTitle(R.string.action_clear_data)
                 .setMessage(R.string.clear_data_message)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -538,22 +491,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
-    }
-
-    // Show/hide "open default app button" in URL text field
-    private void showHideOpenDefaultAppButton() {
-        String packageName = "de.badener.links";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
-        PackageManager packageManager = MainActivity.this.getPackageManager();
-        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        for (ResolveInfo info : list) {
-            packageName = info.activityInfo.packageName;
-        }
-        if (packageName.equals("de.badener.links")) { // No other app can handle this link or "Links" is the default app
-            openDefaultAppButton.setVisibility(View.GONE);
-        } else {
-            openDefaultAppButton.setVisibility(View.VISIBLE); // There is another app for this link
-        }
     }
 
     // Restore fullscreen after losing and gaining focus
@@ -576,26 +513,15 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-    // Enter picture in picture mode
-    @Override
-    public void onUserLeaveHint() {
-        PackageManager packageManager = MainActivity.this.getPackageManager();
-        if (isFullScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-            enterPictureInPictureMode();
-        }
-    }
-
     // Check if permission is granted to write on storage for downloading files
     private boolean isStoragePermissionGranted() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
+        if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true; // Permission is granted
         } else {
             // Ask for permission because it is not granted yet
             Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed, Snackbar.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             return false;
         }
     }
