@@ -18,6 +18,5 @@
     <string name="chooser_open_app">Choose app</string>
     <string name="download_started">Download started</string>
     <string name="storage_permission_needed">Storage access needed to download files</string>
-    <string name="shortcuts_not_supported">Your launcher does not support shortcuts</string>
     <string name="add">Add</string>
 </resources>

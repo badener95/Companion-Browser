@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import de.badener.links.utils.AdBlocking;
 
@@ -312,6 +310,8 @@ public class MainActivity extends AppCompatActivity {
     private void showPopupMenu() {
         final PopupMenu popupMenu = new PopupMenu(this, menuButton);
         popupMenu.inflate(R.menu.menu_main);
+        if (!ShortcutManagerCompat.isRequestPinShortcutSupported(this))
+            popupMenu.getMenu().findItem(R.id.action_add_shortcut).setVisible(false);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
@@ -369,104 +369,93 @@ public class MainActivity extends AppCompatActivity {
 
     // Pin website shortcut to launcher
     private void pinShortcut() {
-        // Check if launcher shortcuts are supported
-        if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
-            // Ask for the shortcut title first
-            final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            final TextInputLayout textInputLayout = new TextInputLayout(MainActivity.this);
-            final TextInputEditText textInput = new TextInputEditText(MainActivity.this);
-            textInput.setText(webView.getTitle());
-            textInput.setSingleLine(true);
-            textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0,
-                    getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0);
-            textInputLayout.addView(textInput);
-            builder.setTitle(R.string.action_add_shortcut);
-            builder.setView(textInputLayout);
+        // Ask for the shortcut title first
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final TextInputLayout textInputLayout = new TextInputLayout(this);
+        final TextInputEditText textInput = new TextInputEditText(this);
+        textInput.setText(webView.getTitle());
+        textInput.setSingleLine(true);
+        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0,
+                getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0);
+        textInputLayout.addView(textInput);
+        builder.setTitle(R.string.action_add_shortcut);
+        builder.setView(textInputLayout);
 
-            builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int i) {
-                    shortcutTitle = Objects.requireNonNull(textInput.getText()).toString(); // Get the name for the shortcut
-                    createShortcutIcon(); // Create icon for the shortcut
-                    // Create the shortcut
-                    Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
-                    pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
-                    pinShortcutIntent.setAction(Intent.ACTION_MAIN);
-                    ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this,
-                            shortcutTitle)
-                            .setShortLabel(shortcutTitle)
-                            .setIcon(shortcutIcon)
-                            .setIntent(pinShortcutIntent)
-                            .build();
-                    ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
-                }
-            });
-            // Cancel creating shortcut
-            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int i) {
-                    dialog.dismiss();
-                }
-            });
-            final AlertDialog dialog = builder.create();
-            dialog.show();
+        builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int i) {
+                // Get the title for the shortcut
+                shortcutTitle = Objects.requireNonNull(textInput.getText()).toString();
+                // Create the icon for the shortcut
+                createShortcutIcon();
+                // Create the shortcut
+                Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
+                pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
+                pinShortcutIntent.setAction(Intent.ACTION_MAIN);
+                ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this,
+                        shortcutTitle)
+                        .setShortLabel(shortcutTitle)
+                        .setIcon(shortcutIcon)
+                        .setIntent(pinShortcutIntent)
+                        .build();
+                ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
+            }
+        });
+        // Cancel creating shortcut
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-            // Check if a title is set
-            textInput.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if (Objects.requireNonNull(textInput.getText()).toString().length() == 0)
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                }
+        // Check if a title is set
+        textInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (Objects.requireNonNull(textInput.getText()).toString().isEmpty())
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+            }
 
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if (Objects.requireNonNull(textInput.getText()).toString().length() >= 1) {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                    } else {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (Objects.requireNonNull(textInput.getText()).toString().isEmpty()) {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
                 }
+            }
 
-                @Override
-                public void afterTextChanged(Editable editable) {
-                }
-            });
-        } else {
-            // Creating shortcuts is not supported
-            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT).show();
-        }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 
-    // Create a launcher icon for shortcuts
+    // Create launcher icons for shortcuts
     private void createShortcutIcon() {
-        // Define some colors
-        String[] colors = {"#d50000", "#c51162", "#aa00ff", "#2962ff", "#00bfa5", "#00c853", "#ffd600", "#ff6d00"};
-        // Get a random color from the ones provide by the array
-        String randomColor = (colors[new Random().nextInt(colors.length)]);
-        // Draw a round background with the random color
-        Bitmap icon = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888);
+        // Draw background
+        Bitmap icon = Bitmap.createBitmap(432, 432, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(icon);
-        Paint paintCircle = new Paint();
-        paintCircle.setAntiAlias(true);
-        paintCircle.setColor(Color.parseColor(randomColor));
-        paintCircle.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(96, 96, 96, paintCircle);
-        // Get first one or two characters of website title
+        canvas.drawColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+        // Get the first one or two characters of the shortcut title
         String iconText;
         if (shortcutTitle.length() >= 2) {
             iconText = shortcutTitle.substring(0, 2);
         } else {
             iconText = shortcutTitle.substring(0, 1);
         }
-        // Draw the first characters on the background
+        // Draw the first one or two characters on the background
         Paint paintText = new Paint();
         paintText.setAntiAlias(true);
-        paintText.setColor(Color.WHITE);
-        paintText.setTextSize(92);
+        paintText.setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+        paintText.setTextSize(128);
         paintText.setFakeBoldText(true);
         paintText.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(iconText, 192 / 2.0f, 192 / 2.0f - (paintText.descent() + paintText.ascent()) / 2.0f, paintText);
+        canvas.drawText(iconText, canvas.getWidth() / 2f,
+                canvas.getHeight() / 2f - (paintText.descent() + paintText.ascent()) / 2f, paintText);
         // Create icon
-        shortcutIcon = IconCompat.createWithBitmap(icon);
+        shortcutIcon = IconCompat.createWithAdaptiveBitmap(icon);
     }
 
     // Clear browsing data
