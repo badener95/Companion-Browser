@@ -8,13 +8,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -303,8 +303,6 @@ public class MainActivity extends AppCompatActivity {
     private void showPopupMenu() {
         final PopupMenu popupMenu = new PopupMenu(this, menuButton);
         popupMenu.inflate(R.menu.menu_main);
-        if (!ShortcutManagerCompat.isRequestPinShortcutSupported(this))
-            popupMenu.getMenu().findItem(R.id.action_add_shortcut).setVisible(false);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
@@ -327,7 +325,11 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.action_add_shortcut:
                         // Pin website shortcut to launcher
-                        pinShortcut();
+                        if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
+                            pinShortcut();
+                        } else {
+                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT).show();
+                        }
                         return true;
 
                     case R.id.action_toggle_ad_blocking:
@@ -377,20 +379,27 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int i) {
                 // Get the title for the shortcut
-                shortcutTitle = Objects.requireNonNull(textInput.getText()).toString();
+                if (Objects.requireNonNull(textInput.getText()).toString().isEmpty()) {
+                    shortcutTitle = webView.getTitle();
+                } else {
+                    shortcutTitle = textInput.getText().toString();
+                }
                 // Create the icon for the shortcut
                 createShortcutIcon();
                 // Create the shortcut
                 Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
                 pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
                 pinShortcutIntent.setAction(Intent.ACTION_MAIN);
-                ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this,
-                        shortcutTitle)
+                ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this, shortcutTitle)
                         .setShortLabel(shortcutTitle)
+                        .setLongLabel(shortcutTitle)
                         .setIcon(shortcutIcon)
                         .setIntent(pinShortcutIntent)
                         .build();
                 ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcut_added, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         // Cancel creating shortcut
@@ -399,38 +408,15 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
-        // Check if a title is set
-        textInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (Objects.requireNonNull(textInput.getText()).toString().isEmpty())
-                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (Objects.requireNonNull(textInput.getText()).toString().isEmpty()) {
-                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                } else {
-                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
+        builder.show();
     }
 
     // Create launcher icons for shortcuts
     private void createShortcutIcon() {
         // Draw background
-        Bitmap icon = Bitmap.createBitmap(432, 432, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(icon);
-        canvas.drawColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background, options);
         // Get the first one or two characters of the shortcut title
         String iconText;
         if (shortcutTitle.length() >= 2) {
@@ -439,6 +425,7 @@ public class MainActivity extends AppCompatActivity {
             iconText = shortcutTitle.substring(0, 1);
         }
         // Draw the first one or two characters on the background
+        Canvas canvas = new Canvas(icon);
         Paint paintText = new Paint();
         paintText.setAntiAlias(true);
         paintText.setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
