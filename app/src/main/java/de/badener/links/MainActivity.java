@@ -33,12 +33,12 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private IconCompat shortcutIcon;
 
     private WebView webView;
-    private RelativeLayout bottomBar;
+    private ConstraintLayout bottomBar;
     private ImageButton webViewControlButton;
     private TextInputEditText searchTextInput;
     private ImageButton clearSearchTextButton;

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:layout_alignParentBottom="true"
     android:background="@color/colorPrimary"
+    tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_margin="8dp"
-        android:layout_toStartOf="@+id/menuButton"
         app:cardBackgroundColor="@color/colorPrimaryVariant"
         app:cardCornerRadius="4dp"
-        app:cardElevation="2dp">
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toStartOf="@id/menuButton"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -30,15 +30,13 @@
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/webview_control_button"
+                app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/ic_cancel" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/searchTextInput"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_toStartOf="@+id/clearSearchTextButton"
-                android:layout_toEndOf="@+id/webViewControlButton"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"
@@ -51,32 +49,35 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/clearSearchTextButton"
+                app:layout_constraintStart_toEndOf="@+id/webViewControlButton" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/clearSearchTextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/clear_search_text_button"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_cancel" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/menuButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="-8dp"
-        android:adjustViewBounds="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
         android:background="?attr/actionBarItemBackground"
         android:contentDescription="@string/menu_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_more" />
 
     <ProgressBar
@@ -84,6 +85,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:progress="50" />
+        android:progress="50"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
