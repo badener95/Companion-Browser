@@ -17,6 +17,7 @@
     <string name="clear_data_confirmation">Browser Daten gelöscht</string>
     <string name="chooser_share">URL teilen</string>
     <string name="chooser_open_app">App wählen</string>
+    <string name="url_cannot_be_loaded">URL kann nicht geladen werden</string>
     <string name="download_started">Download gestartet</string>
     <string name="storage_permission_needed">Speicherzugriff benötigt um Dateien zu downloaden</string>
     <string name="add">Hinzufügen</string>

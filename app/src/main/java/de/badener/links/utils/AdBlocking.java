@@ -7,20 +7,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.webkit.WebResourceResponse;
-
 import androidx.annotation.WorkerThread;
+import de.badener.links.R;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
-
-import de.badener.links.R;
 
 public class AdBlocking {
     private static final int AD_HOSTS_FILE = R.raw.hosts;
@@ -53,7 +47,7 @@ public class AdBlocking {
 
     public static boolean isAd(String url) {
         try {
-            final URL netUrl = new URL(url);
+            URL netUrl = new URL(url);
             return isAdHost(netUrl.getHost());
         } catch (MalformedURLException ignored) {
         }
@@ -64,8 +58,9 @@ public class AdBlocking {
         if (TextUtils.isEmpty(host)) {
             return false;
         }
-        int index = host.indexOf(".");
-        return index >= 0 && (AD_HOSTS.contains(host) || index + 1 < host.length() && isAdHost(host.substring(index + 1)));
+        int index = host.indexOf('.');
+        return index >= 0 && (AD_HOSTS.contains(host) ||
+                index + 1 < host.length() && isAdHost(host.substring(index + 1)));
     }
 
     public static WebResourceResponse createEmptyResource() {
