@@ -1,4 +1,4 @@
-package de.badener.links;
+package de.badener.companion_browser;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -53,7 +53,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import de.badener.links.utils.AdBlocking;
+import de.badener.companion_browser.utils.AdBlocking;
 
 public class MainActivity extends AppCompatActivity {
 

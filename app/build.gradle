@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        applicationId "de.badener.links"
+        applicationId "de.badener.companion_browser"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -23,14 +23,14 @@ android {
     applicationVariants.all {
         variant ->
             variant.outputs.all {
-                outputFileName = "Links-${variant.name}.apk"
+                outputFileName = "Companion_Browser-${variant.name}-v${versionName}.apk"
             }
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
 }

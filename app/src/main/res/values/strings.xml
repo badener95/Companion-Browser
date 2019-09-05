@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Links</string>
+    <string name="app_name" translatable="false">Companion Browser</string>
     <string name="webview_control_button">Reload/cancel</string>
     <string name="clear_search_text_button">Clear input</string>
     <string name="menu_button">Menu</string>

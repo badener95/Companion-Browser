@@ -1,14 +1,14 @@
 // Ad blocking based on this:
 // https://github.com/CarbonROM/android_packages_apps_Quarks/commit/a9abee9694c8dd239cda403bd99ea9e0922b90b5
 
-package de.badener.links.utils;
+package de.badener.companion_browser.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.webkit.WebResourceResponse;
 import androidx.annotation.WorkerThread;
-import de.badener.links.R;
+import de.badener.companion_browser.R;
 
 import java.io.*;
 import java.net.MalformedURLException;
