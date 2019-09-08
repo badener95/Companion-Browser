@@ -7,14 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -133,13 +131,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle the search button shown in the keyboard
+        // Handle the "go button" shown in the keyboard
         searchTextInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    if (Objects.requireNonNull(searchTextInput.getText()).toString().trim().isEmpty() ||
-                            searchTextInput.getText().toString().trim().equals(webView.getUrl())) {
+                if (i == EditorInfo.IME_ACTION_GO) {
+                    if (Objects.requireNonNull(searchTextInput.getText()).toString().trim().isEmpty()) {
                         searchTextInput.setText(webView.getUrl());
                     } else {
                         String text = searchTextInput.getText().toString().trim();
@@ -405,20 +402,18 @@ public class MainActivity extends AppCompatActivity {
 
     // Create launcher icons for shortcuts
     private void createShortcutIcon() {
-        // Load background (same as the app icon)
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_background, options);
+        // Draw background
+        Bitmap icon = Bitmap.createBitmap(432, 432, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(icon);
+        canvas.drawColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
         // Get the first one or two characters of the shortcut title
         String iconText;
         iconText = (shortcutTitle.length() >= 2 ? shortcutTitle.substring(0, 2) : shortcutTitle.substring(0, 1));
         // Draw the first one or two characters on the background
-        Canvas canvas = new Canvas(icon);
         Paint paintText = new Paint();
         paintText.setAntiAlias(true);
-        paintText.setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
-        paintText.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32f,
-                getResources().getDisplayMetrics()));
+        paintText.setColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+        paintText.setTextSize(128);
         paintText.setFakeBoldText(true);
         paintText.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(iconText, canvas.getWidth() / 2f,
@@ -431,6 +426,7 @@ public class MainActivity extends AppCompatActivity {
     private void clearBrowsingData() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.action_clear_data)
+                .setIcon(R.drawable.ic_delete_outline)
                 .setMessage(R.string.clear_data_message)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override

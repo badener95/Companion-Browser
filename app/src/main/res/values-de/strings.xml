@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="webview_control_button">Neu laden/abbrechen</string>
+    <string name="search_text_input_hint">Suchbegriff oder URL eingeben</string>
     <string name="clear_search_text_button">Eingabe löschen</string>
     <string name="menu_button">Menü</string>
     <string name="action_new_window">Neues Fenster</string>
