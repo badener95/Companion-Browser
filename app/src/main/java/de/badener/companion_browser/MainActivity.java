@@ -3,8 +3,10 @@ package de.badener.companion_browser;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -35,6 +37,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -57,8 +60,6 @@ import de.badener.companion_browser.utils.AdBlocking;
 public class MainActivity extends AppCompatActivity {
 
     private static final String startPage = "https://www.google.com/";
-    private String shortcutTitle;
-    private IconCompat shortcutIcon;
 
     private WebView webView;
     private AppCompatImageView bottomBarShadow;
@@ -70,14 +71,23 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FrameLayout fullScreen;
 
-    private boolean isLoading = true;
-    private boolean isAdBlockingEnabled = true;
-    private boolean isFullScreen = false;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
+    private String shortcutTitle;
+    private IconCompat shortcutIcon;
+
+    private boolean isLoading;
+    private boolean isAdBlockingEnabled;
+    private boolean isDarkThemeEnabled;
+    private boolean isFullScreen;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        toggleDarkTheme();
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
@@ -104,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize ad blocking
         AdBlocking.init(this);
+        isAdBlockingEnabled = sharedPreferences.getBoolean("ad_blocking", true);
 
         // Handle "WebView control button" in the search field
         webViewControlButton.setOnClickListener(new View.OnClickListener() {
@@ -301,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
         PopupMenu popupMenu = new PopupMenu(this, menuButton);
         popupMenu.inflate(R.menu.menu_main);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
+        popupMenu.getMenu().findItem(R.id.action_toggle_dark_theme).setChecked(isDarkThemeEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -334,6 +346,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_toggle_ad_blocking:
                         // Toggle ad blocking
                         isAdBlockingEnabled = !isAdBlockingEnabled;
+                        editor = sharedPreferences.edit();
+                        editor.putBoolean("ad_blocking", isAdBlockingEnabled);
+                        editor.apply();
                         Snackbar.make(findViewById(R.id.coordinatorLayout), (isAdBlockingEnabled ?
                                         R.string.ad_blocking_enabled : R.string.ad_blocking_disabled),
                                 Snackbar.LENGTH_SHORT).show();
@@ -344,6 +359,17 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_clear_data:
                         // Clear browsing data
                         clearBrowsingData();
+                        return true;
+
+                    case R.id.action_toggle_dark_theme:
+                        // Toggle dark theme
+                        isDarkThemeEnabled = !isDarkThemeEnabled;
+                        editor = sharedPreferences.edit();
+                        editor.putBoolean("dark_theme", isDarkThemeEnabled);
+                        editor.apply();
+                        Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.restart_app,
+                                Snackbar.LENGTH_SHORT).show();
+                        item.setChecked(isDarkThemeEnabled);
                         return true;
 
                     case R.id.action_close_window:
@@ -357,6 +383,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         popupMenu.show();
+    }
+
+    // Enable/disable dark theme
+    private void toggleDarkTheme() {
+        isDarkThemeEnabled = sharedPreferences.getBoolean("dark_theme", true);
+        if (isDarkThemeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
     }
 
     // Pin website shortcut to launcher
