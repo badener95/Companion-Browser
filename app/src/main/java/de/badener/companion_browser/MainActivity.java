@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private IconCompat shortcutIcon;
 
     private WebView webView;
+    private AppCompatImageView bottomBarShadow;
     private ConstraintLayout bottomBar;
     private ImageButton webViewControlButton;
     private TextInputEditText searchTextInput;
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
+        bottomBarShadow = findViewById(R.id.bottomBarShadow);
         bottomBar = findViewById(R.id.bottomBar);
         webViewControlButton = findViewById(R.id.webViewControlButton);
         searchTextInput = findViewById(R.id.searchTextInput);
@@ -229,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
+                bottomBarShadow.setVisibility(View.GONE);
                 bottomBar.setVisibility(View.GONE);
                 fullScreen.setVisibility(View.VISIBLE);
                 fullScreen.addView(view);
@@ -240,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onHideCustomView() {
                 super.onHideCustomView();
+                bottomBarShadow.setVisibility(View.VISIBLE);
                 bottomBar.setVisibility(View.VISIBLE);
                 fullScreen.setVisibility(View.GONE);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);

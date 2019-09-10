@@ -2,6 +2,7 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -16,6 +17,14 @@
             android:layout_height="match_parent" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/bottomBarShadow"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        app:srcCompat="@drawable/bottom_bar_shadow" />
 
     <include
         android:id="@+id/bottomBar"
