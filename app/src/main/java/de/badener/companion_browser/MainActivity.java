@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -79,15 +78,12 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoading;
     private boolean isAdBlockingEnabled;
-    private boolean isDarkThemeEnabled;
     private boolean isFullScreen;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        toggleDarkTheme();
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
@@ -114,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize ad blocking
         AdBlocking.init(this);
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         isAdBlockingEnabled = sharedPreferences.getBoolean("ad_blocking", true);
 
         // Handle "WebView control button" in the search field
@@ -312,7 +309,6 @@ public class MainActivity extends AppCompatActivity {
         PopupMenu popupMenu = new PopupMenu(this, menuButton);
         popupMenu.inflate(R.menu.menu_main);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
-        popupMenu.getMenu().findItem(R.id.action_toggle_dark_theme).setChecked(isDarkThemeEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -361,17 +357,6 @@ public class MainActivity extends AppCompatActivity {
                         clearBrowsingData();
                         return true;
 
-                    case R.id.action_toggle_dark_theme:
-                        // Toggle dark theme
-                        isDarkThemeEnabled = !isDarkThemeEnabled;
-                        editor = sharedPreferences.edit();
-                        editor.putBoolean("dark_theme", isDarkThemeEnabled);
-                        editor.apply();
-                        Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.restart_app,
-                                Snackbar.LENGTH_SHORT).show();
-                        item.setChecked(isDarkThemeEnabled);
-                        return true;
-
                     case R.id.action_close_window:
                         // Close window
                         finishAndRemoveTask();
@@ -383,16 +368,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         popupMenu.show();
-    }
-
-    // Enable/disable dark theme
-    private void toggleDarkTheme() {
-        isDarkThemeEnabled = sharedPreferences.getBoolean("dark_theme", true);
-        if (isDarkThemeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
     }
 
     // Pin website shortcut to launcher
