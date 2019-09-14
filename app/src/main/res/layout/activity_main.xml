@@ -21,7 +21,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/bottomBarShadow"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="8dp"
         android:layout_marginBottom="?attr/actionBarSize"
         android:layout_gravity="bottom"
         app:srcCompat="@drawable/bottom_bar_shadow" />

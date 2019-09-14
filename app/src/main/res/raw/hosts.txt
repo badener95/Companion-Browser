@@ -31,7 +31,6 @@
 7search.com
 82o9v830.com
 99count.com
-a-ads.com
 a.aproductmsg.com
 a.consumer.net
 a.mktw.net
@@ -55,6 +54,7 @@ absorbingband.com
 absurdwater.com
 abz.com
 ac.rnm.ca
+acceptable.a-ads.com
 acridtwist.com
 actionsplash.com
 actualdeals.com
@@ -77,6 +77,7 @@ ad-tech.com
 ad-up.com
 ad.100.tbn.ru
 ad.71i.de
+ad.a-ads.com
 ad.a8.net
 ad.abcnews.com
 ad.abctv.com
@@ -293,6 +294,7 @@ adnet.biz
 adnet.de
 adnet.ru
 adnet.worldreviewer.com
+adnetinteractive.com
 adnetwork.net
 adnetworkperformance.com
 adnews.maddog2000.de
@@ -359,7 +361,6 @@ ads.avazu.net
 ads.batpmturner.com
 ads.belointeractive.com
 ads.berlinonline.de
-ads.betanews.com
 ads.betfair.com
 ads.bigchurch.com
 ads.bigfoot.com
@@ -1213,6 +1214,7 @@ cjlog.com
 claria.com
 clearcomb.com
 clevernt.com
+click.a-ads.com
 click.absoluteagency.com
 click.fool.com
 click.kmindex.ru
@@ -1437,6 +1439,7 @@ dstillery.com
 dynamic.fmpub.net
 dyntrk.com
 e-adimages.scrippsnetworks.com
+e-bannerx.com
 e-debtconsolidation.com
 e-m.fr
 e-n-t-e-r-n-e-x.com
@@ -1556,7 +1559,6 @@ findepended.com
 findyourcasino.com
 first.nova.cz
 firstlightera.com
-firstpromoter.com
 flakyfeast.com
 flashtalking.com
 flavordecision.com
@@ -1582,7 +1584,6 @@ freeonlineusers.com
 freepay.com
 freeskreen.com
 freestats.com
-freestats.tv
 freewebcounter.com
 freshmarketer.com
 frightenedpotato.com
@@ -1679,6 +1680,7 @@ hitiz.com
 hitlist.ru
 hitlounge.com
 hitometer.com
+hits-i.iubenda.com
 hits.europuls.eu
 hits.informer.com
 hits.puls.lv
@@ -1921,6 +1923,7 @@ madvertise.de
 magicadz.co
 magnificentmist.com
 marchex.com
+marinsm.com
 markedcrayon.com
 markedpail.com
 market-buster.com
@@ -2020,6 +2023,7 @@ modifyeyes.com
 moggattice.com
 moldyicicle.com
 monetate.net
+monetizer101.com
 moneyexpert.co.uk
 monsterpops.com
 mookie1.com
@@ -2089,7 +2093,6 @@ newopenx.detik.com
 newstarads.com
 newt1.adultadworld.com
 newt1.adultworld.com
-newtopsites.com
 nexage.com
 ng3.ads.warnerbros.com
 nitratory.com
@@ -2110,7 +2113,6 @@ nuttyorganization.com
 nzaza.com
 o0bc.com
 oas.benchmark.fr
-oas.foxnews.com
 oas.repubblica.it
 oas.roanoke.com
 oas.toronto.com
@@ -2260,7 +2262,6 @@ possessivebucket.com
 possibleboats.com
 postback.iqm.com
 postrelease.com
-potenza.cz
 pr-star.de
 praddpro.de
 prchecker.info
@@ -2287,6 +2288,7 @@ promobenef.com
 promos.bwin.it
 promos.fling.com
 promote.pair.com
+promotion-campaigns.com
 pronetadvertising.com
 propellerads.com
 proper.io
@@ -2598,6 +2600,7 @@ stat.zenon.net
 stat24.com
 stat24.meta.ua
 statcounter.com
+static.a-ads.com
 static.fmpub.net
 static.itrack.it
 staticads.btopenworld.com
@@ -2657,6 +2660,7 @@ swimslope.com
 swordfishdc.com
 swordgoose.com
 t.eloqua.com
+t.firstpromoter.com
 t.insigit.com
 taboola.com
 tagan.adlightning.com
@@ -2768,7 +2772,6 @@ tracker-pm2.spilleren.com
 tracker.bannerflow.com
 tracker.colpirio.com
 tracker.icerocket.com
-tracker.marinsm.com
 tracker.samplicio.us
 tracker.trackerfix.com
 tracker.vgame.us
@@ -2875,6 +2878,7 @@ visiblemeasures.com
 visistat.com
 visit.webhosting.yahoo.com
 visitbox.de
+visitpath.com
 visual-pagerank.fr
 visualrevenue.com
 vivtracking.com
