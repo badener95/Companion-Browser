@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -52,6 +53,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private AppCompatImageView bottomBarShadow;
     private ConstraintLayout bottomBar;
     private ImageButton webViewControlButton;
+    private ImageButton openDefaultAppButton;
     private TextInputEditText searchTextInput;
     private ImageButton clearSearchTextButton;
     private ImageButton menuButton;
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         bottomBarShadow = findViewById(R.id.bottomBarShadow);
         bottomBar = findViewById(R.id.bottomBar);
         webViewControlButton = findViewById(R.id.webViewControlButton);
+        openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         searchTextInput = findViewById(R.id.searchTextInput);
         clearSearchTextButton = findViewById(R.id.clearSearchTextButton);
         menuButton = findViewById(R.id.menuButton);
@@ -126,6 +130,15 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     webView.reload();
                 }
+            }
+        });
+
+        // Handle "open default app button" in the search field
+        openDefaultAppButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
+                startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
             }
         });
 
@@ -284,6 +297,12 @@ public class MainActivity extends AppCompatActivity {
                     return (ad ? AdBlocking.createEmptyResource() : super.shouldInterceptRequest(view, request));
                 }
                 return super.shouldInterceptRequest(view, request);
+            }
+
+            // Check for default apps on page started loading
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                checkDefaultApps();
             }
 
             // Handle external links
@@ -502,6 +521,22 @@ public class MainActivity extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
+    // Check if there is a default app to open the current link
+    private void checkDefaultApps() {
+        String packageName = "de.badener.companion_browser";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
+        PackageManager packageManager = getPackageManager();
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo info : list) {
+            packageName = info.activityInfo.packageName;
+        }
+        if (packageName.equals("de.badener.companion_browser")) {
+            openDefaultAppButton.setVisibility(View.GONE);
+        } else {
+            openDefaultAppButton.setVisibility(View.VISIBLE);
         }
     }
 
