@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
     private String shortcutTitle;
     private IconCompat shortcutIcon;
 
-    private boolean isLoading;
     private boolean isChromiumAvailable;
     private boolean isAdBlockingEnabled;
     private boolean isDarkThemeEnabled;
@@ -125,10 +124,10 @@ public class MainActivity extends AppCompatActivity {
         webViewControlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isLoading) {
-                    webView.stopLoading();
-                } else {
+                if (webView.getProgress() == 100) {
                     webView.reload();
+                } else {
+                    webView.stopLoading();
                 }
             }
         });
@@ -241,15 +240,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 progressBar.setProgress(newProgress);
+                if (!searchTextInput.hasFocus()) searchTextInput.setText(webView.getUrl());
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
                     webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_reload));
-                    isLoading = false;
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
-                    if (!searchTextInput.hasFocus()) searchTextInput.setText(webView.getUrl());
                     webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
-                    isLoading = true;
                 }
             }
 

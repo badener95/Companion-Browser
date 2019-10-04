@@ -31,7 +31,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/webview_control_button"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_cancel" />
+                app:srcCompat="@drawable/ic_reload" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/openDefaultAppButton"
@@ -52,13 +52,13 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
+                android:hint="@string/search_text_input_hint"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:hint="@string/search_text_input_hint"
                 android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"

@@ -7,14 +7,20 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.webkit.WebResourceResponse;
-import androidx.annotation.WorkerThread;
-import de.badener.companion_browser.R;
 
-import java.io.*;
+import androidx.annotation.WorkerThread;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+
+import de.badener.companion_browser.R;
 
 public class AdBlocking {
     private static final int AD_HOSTS_FILE = R.raw.hosts;
