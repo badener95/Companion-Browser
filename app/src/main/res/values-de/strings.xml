@@ -6,6 +6,7 @@
     <string name="menu_button">Menü</string>
     <string name="action_new_window">Neues Fenster</string>
     <string name="action_share">Teilen</string>
+    <string name="action_open_in_chromium">In Chromium öffnen</string>
     <string name="action_add_shortcut">Verknüpfung hinzufügen</string>
     <string name="action_toggle_ad_blocking">Werbeblocker</string>
     <string name="action_clear_data">Browser Daten löschen</string>
