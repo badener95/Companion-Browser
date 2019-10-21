@@ -261,6 +261,7 @@ adk2ads.tictacti.com
 adland.ru
 adledge.com
 adlegend.com
+adlightning.com
 adlog.com.com
 adloox.com
 adlooxtracking.com
@@ -516,6 +517,7 @@ ads.mediaodyssey.com
 ads.medienhaus.de
 ads.mgnetwork.com
 ads.miarroba.com
+ads.mic.com
 ads.mmania.com
 ads.mobilautomaten.com
 ads.mobilebet.com
@@ -643,6 +645,7 @@ ads.yourfreedvds.com
 ads.youtube.com
 ads.zdnet.com
 ads.ztod.com
+ads1-adnow.com
 ads1.canoe.ca
 ads1.mediacapital.pt
 ads1.msn.com
@@ -684,6 +687,7 @@ adsby.bidtheatre.com
 adscale.de
 adscholar.com
 adscience.nl
+adscpm.com
 adsdaq.com
 adsend.de
 adsensecustomsearchads.com
@@ -700,6 +704,7 @@ adserver.bizhat.com
 adserver.break-even.it
 adserver.cams.com
 adserver.com
+adserver.dca13.com
 adserver.digitoday.com
 adserver.freecity.de
 adserver.friendfinder.com
@@ -732,6 +737,7 @@ adserver01.de
 adserver1-images.backbeatmedia.com
 adserver1.backbeatmedia.com
 adserver1.mindshare.de
+adserver1.ogilvy-interactive.de
 adserver2.mindshare.de
 adserverplus.com
 adserverpub.com
@@ -893,6 +899,7 @@ alipromo.com
 all4spy.com
 allosponsor.com
 alphonso.tv
+als-svc.nytimes.com
 amazingcounters.com
 amazon-adsystem.com
 ambiguousquilt.com
@@ -951,6 +958,7 @@ as1.advfn.com
 assets1.exgfnetwork.com
 assoc-amazon.com
 aswpapius.com
+aswpsdkus.com
 at-adserver.alltop.com
 atdmt.com
 athena-ads.wikia.com
@@ -1272,6 +1280,7 @@ coinhive.com
 cointraffic.io
 colonize.com
 colpirio.com
+com-optimize-mac.live
 comclick.com
 comfortablecheese.com
 commindo-media-ressourcen.de
@@ -1341,7 +1350,6 @@ crawlclocks.com
 crazyegg.com
 crazypopups.com
 creafi-online-media.com
-creatives.as4x.tmcs.net
 creatives.livejasmin.com
 credishe.com
 creep.world
@@ -1414,6 +1422,7 @@ displayadsmedia.com
 disqusads.com
 dist.belnk.com
 distillery.wistia.com
+districtm.ca
 dk4ywix.com
 dmp.mall.tv
 dmtracker.com
@@ -1476,7 +1485,6 @@ elderlytown.com
 elephantqueue.com
 elitedollars.com
 elitetoplist.com
-elthamely.com
 emarketer.com
 emebo.com
 emebo.io
@@ -1502,6 +1510,7 @@ erne.co
 ero-advertising.com
 errortablet.com
 estat.com
+et.nytimes.com
 etahub.com
 etargetnet.com
 etracker.de
@@ -1510,6 +1519,7 @@ eu1.madsone.com
 eurekster.com
 euros4click.de
 eusta.de
+evadav.com
 everesttech.net
 evergage.com
 eversales.space
@@ -1565,6 +1575,7 @@ findepended.com
 findyourcasino.com
 first.nova.cz
 firstlightera.com
+fixel.ai
 flakyfeast.com
 flashtalking.com
 flavordecision.com
@@ -1746,6 +1757,7 @@ immensehoney.com
 imonitor.nethost.cz
 importedincrease.com
 impossibleexpansion.com
+imprese.cz
 impressionmedia.cz
 impressionz.co.uk
 impulsehands.com
@@ -1813,6 +1825,7 @@ joetec.net
 jquery-bin.com
 js.users.51.la
 jsecoin.com
+jsrdn.com
 juicyads.com
 jumptap.com
 justicejudo.com
@@ -1954,7 +1967,6 @@ maximumcash.com
 maxonclick.com
 mbs.megaroticlive.com
 mbuyu.nl
-mdotm.com
 measuremap.com
 media-adrunner.mycomputer.com
 media-servers.net
@@ -2026,6 +2038,7 @@ moatads.com
 moatpixel.com
 mobclix.com
 mobileiconnect.com
+modernpricing.com
 modifyeyes.com
 moggattice.com
 moldyicicle.com
@@ -2231,6 +2244,7 @@ photographpan.com
 phpadsnew.new.natuurpark.nl
 phpmyvisites.net
 pi.pardot.com
+piano.io
 picadmedia.com
 piet2eix3l.com
 pietexture.com
@@ -2326,6 +2340,7 @@ px.ads.linkedin.com
 px.dynamicyield.com
 px.gfycat.com
 pxl.iqm.com
+pymx5.com
 q.azcentral.com
 qctop.com
 qnsr.com
@@ -2419,6 +2434,7 @@ revenuedirect.com
 revenuehits.com
 revsci.net
 revstats.com
+rhombusads.com
 richmails.com
 richmedia.yimg.com
 richstring.com
@@ -2770,6 +2786,7 @@ track.flexlinkspro.com
 track.gawker.com
 track.mailerlite.com
 track.nuxues.com
+track.ultravpn.com
 track.viewdeos.com
 track1.viewdeos.com
 trackalyzer.com
