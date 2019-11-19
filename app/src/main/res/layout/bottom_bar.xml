@@ -61,7 +61,10 @@
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="16sp"
+                app:autoSizeStepGranularity="2sp"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintEnd_toStartOf="@+id/clearSearchTextButton"
                 app:layout_constraintStart_toEndOf="@+id/openDefaultAppButton" />
 
