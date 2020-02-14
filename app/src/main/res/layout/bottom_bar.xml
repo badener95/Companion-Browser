@@ -14,9 +14,9 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         app:cardBackgroundColor="@color/colorPrimaryVariant"
-        app:cardCornerRadius="4dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
-        app:layout_constraintEnd_toStartOf="@id/menuButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -76,24 +76,22 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/clear_search_text_button"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/menuButton"
                 app:srcCompat="@drawable/ic_cancel" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/menuButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/menu_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_more" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/menuButton"
-        android:layout_width="40dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="8dp"
-        android:background="?attr/actionBarItemBackground"
-        android:contentDescription="@string/menu_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_more" />
 
     <ProgressBar
         android:id="@+id/progressBar"
