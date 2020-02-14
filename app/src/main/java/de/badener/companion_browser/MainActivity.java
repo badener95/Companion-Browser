@@ -358,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.action_open_in_chromium:
+                        // Open website in Chromium
                         Uri uri = Uri.parse("googlechrome://navigate?url=" + webView.getUrl());
                         Intent chromeIntent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(Intent.createChooser(chromeIntent, getString(R.string.chooser_open_app)));

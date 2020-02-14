@@ -1,5 +1,5 @@
 # Companion Browser
-Lightweight and good looking simple browser to be used along side a more sophisticated browser (hence the name), at the moment preferably a Chromium based browser, e.g. [Googel Chrome](https://play.google.com/store/apps/details?id=com.android.chrome), [Brave Browser](https://play.google.com/store/apps/details?id=com.brave.browser), [Bromite](https://www.bromite.org/), [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser)...
+Lightweight and good looking simple browser to be used along side a more sophisticated browser (hence the name), at the moment preferably a Chromium based browser, e.g. [Google Chrome](https://play.google.com/store/apps/details?id=com.android.chrome), [Brave Browser](https://play.google.com/store/apps/details?id=com.brave.browser), [Bromite](https://www.bromite.org/), [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser)...
 
 Most features work without another browser of course!
 
