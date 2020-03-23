@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     private IconCompat shortcutIcon;
 
     private boolean isDefaultAppAvailable;
-    private boolean isChromiumAvailable;
     private boolean isAdBlockingEnabled;
     private boolean isFullScreen;
 
@@ -253,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Enter fullscreen
             @Override
-            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+            public void onShowCustomView(View view, CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
                 bottomBarShadow.setVisibility(View.GONE);
                 bottomBar.setVisibility(View.GONE);
@@ -334,8 +333,6 @@ public class MainActivity extends AppCompatActivity {
     private void showPopupMenu() {
         PopupMenu popupMenu = new PopupMenu(this, menuButton);
         popupMenu.inflate(R.menu.menu_main);
-        isChromiumAvailable();
-        popupMenu.getMenu().findItem(R.id.action_open_in_chromium).setEnabled(isChromiumAvailable);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -355,13 +352,6 @@ public class MainActivity extends AppCompatActivity {
                         shareIntent.setType("text/plain");
                         shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
                         startActivity(Intent.createChooser(shareIntent, getString(R.string.chooser_share)));
-                        return true;
-
-                    case R.id.action_open_in_chromium:
-                        // Open website in Chromium
-                        Uri uri = Uri.parse("googlechrome://navigate?url=" + webView.getUrl());
-                        Intent chromeIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(Intent.createChooser(chromeIntent, getString(R.string.chooser_open_app)));
                         return true;
 
                     case R.id.action_add_shortcut:
@@ -403,13 +393,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         popupMenu.show();
-    }
-
-    // Check if "Chromium" is available
-    private void isChromiumAvailable() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("googlechrome://navigate?url=https://example.com/"));
-        PackageManager packageManager = getPackageManager();
-        isChromiumAvailable = (intent.resolveActivity(packageManager) != null);
     }
 
     // Pin website shortcut to launcher

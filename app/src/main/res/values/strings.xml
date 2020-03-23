@@ -8,7 +8,6 @@
     <string name="menu_button">Menu</string>
     <string name="action_new_window">New window</string>
     <string name="action_share">Share</string>
-    <string name="action_open_in_chromium">Open in Chromium</string>
     <string name="action_add_shortcut">Add shortcut</string>
     <string name="action_toggle_ad_blocking">Ad blocking</string>
     <string name="action_clear_data">Clear browsing data</string>
