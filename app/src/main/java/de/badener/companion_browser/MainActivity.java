@@ -272,8 +272,15 @@ public class MainActivity extends AppCompatActivity {
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                 int isLightThemeEnabled = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
                 if (isLightThemeEnabled == Configuration.UI_MODE_NIGHT_NO) {
-                    // Light theme is enabled, restore light status bar
-                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    // Light theme is enabled, restore light status bar and nav bar
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        View decorView = getWindow().getDecorView();
+                        decorView.setSystemUiVisibility(
+                                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                                        | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                    } else {
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    }
                 }
                 isFullScreen = false;
             }
