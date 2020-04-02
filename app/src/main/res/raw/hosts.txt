@@ -415,7 +415,6 @@ ads.cybersales.cz
 ads.dada.it
 ads.dailycamera.com
 ads.datingyes.com
-ads.dazoot.ro
 ads.deltha.hu
 ads.dennisnet.co.uk
 ads.desmoinesregister.com
@@ -750,7 +749,6 @@ adserver01.de
 adserver1-images.backbeatmedia.com
 adserver1.backbeatmedia.com
 adserver1.mindshare.de
-adserver1.ogilvy-interactive.de
 adserver2.mindshare.de
 adservern2.host
 adserverplus.com
@@ -1243,6 +1241,7 @@ cdn.bannerflow.com
 cdn.branch.io
 cdn.freefarcy.com
 cdn.heapanalytics.com
+cdn.keywee.co
 cdn.onesignal.com
 cdn.segment.com
 cecash.com
@@ -1277,7 +1276,6 @@ claria.com
 clearcomb.com
 clevernt.com
 click.a-ads.com
-click.absoluteagency.com
 click.fool.com
 click.kmindex.ru
 click2freemoney.com
@@ -1683,6 +1681,7 @@ freewheel.tv
 freshmarketer.com
 frightenedpotato.com
 frtyj.com
+fukc69xo.us
 fullstory.com
 functionalcrown.com
 funklicks.com
@@ -1795,6 +1794,7 @@ hits.theguardian.com
 hits4me.com
 hitslink.com
 hittail.com
+hitttenevtanin.com
 hlok.qertewrt.com
 hollandbusinessadvertising.nl
 hollowshake.com
@@ -1863,7 +1863,6 @@ improvedigital.com
 impulsehands.com
 imrworldwide.com
 inaccused.com
-inboxdollars.com
 incentaclick.com
 inclk.com
 incognitosearches.com
@@ -1947,7 +1946,6 @@ kargo.com
 karisimbi.net
 karonty.com
 keymedia.hu
-keywee.co
 kindads.com
 kissmetrics.com
 klclick.com
@@ -2061,6 +2059,7 @@ m4n.nl
 m6r.eu
 mackeeperapp.mackeeper.com
 madclient.uimserv.net
+madcpms.com
 madisonavenue.com
 mads.cnet.com
 madvertise.de
@@ -2331,6 +2330,7 @@ optmnstr.com
 optmstr.com
 optnmstr.com
 ordingly.com
+ostr.io
 ota.cartrawler.com
 otto-images.developershed.com
 outbrain.com
@@ -2361,6 +2361,7 @@ partnerad.l.google.com
 partnerads.ysm.yahoo.com
 partnercash.de
 partners.priceline.com
+passeura.com
 passion-4.net
 paycounter.com
 paypopup.com
@@ -2405,6 +2406,7 @@ pix.spot.im
 pixel.adsafeprotected.com
 pixel.condenastdigital.com
 pixel.digitru.st
+pixel.keywee.co
 pixel.mtrcs.samba.tv
 pixel.sojern.com
 pixel.watch
@@ -2930,6 +2932,7 @@ theadex.com
 theadhost.com
 thebugs.ws
 theclickads.com
+themoneytizer.com
 therapistla.com
 thinkablerice.com
 thirdrespect.com
@@ -3029,7 +3032,6 @@ traffichunt.com
 trafficjunky.net
 trafficleader.com
 trafficrouter.io
-trafficsecrets.com
 trafficspaces.net
 trafficstrategies.com
 trafficswarm.com
@@ -3051,6 +3053,7 @@ trickycelery.com
 triplelift.com
 triptease.io
 trix.net
+trk.techtarget.com
 trk42.net
 trkn.us
 trknths.com
