@@ -15,8 +15,8 @@
         android:layout_margin="8dp"
         app:cardBackgroundColor="@color/colorPrimaryVariant"
         app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toStartOf="@+id/menuButton"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,20 +51,16 @@
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
                 android:hint="@string/search_text_input_hint"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
+                android:requiresFadingEdge="horizontal"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
                 android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
-                app:autoSizeMaxTextSize="20sp"
-                app:autoSizeMinTextSize="16sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform"
                 app:layout_constraintEnd_toStartOf="@+id/clearSearchTextButton"
                 app:layout_constraintStart_toEndOf="@+id/openDefaultAppButton" />
 
@@ -76,22 +72,22 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/clear_search_text_button"
                 android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/menuButton"
-                app:srcCompat="@drawable/ic_cancel" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/menuButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/menu_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_more" />
+                app:srcCompat="@drawable/ic_cancel" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/menuButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:background="?attr/actionBarItemBackground"
+        android:contentDescription="@string/menu_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_more" />
 
     <ProgressBar
         android:id="@+id/progressBar"

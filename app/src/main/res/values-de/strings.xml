@@ -5,8 +5,8 @@
     <string name="search_text_input_hint">Suchbegriff oder URL eingeben</string>
     <string name="clear_search_text_button">Eingabe löschen</string>
     <string name="menu_button">Menü</string>
-    <string name="action_new_window">Neues Fenster</string>
     <string name="action_share">Teilen</string>
+    <string name="action_new_window">Neues Fenster</string>
     <string name="action_add_shortcut">Verknüpfung hinzufügen</string>
     <string name="action_toggle_ad_blocking">Werbeblocker</string>
     <string name="action_clear_data">Browser-Daten löschen</string>
@@ -15,12 +15,13 @@
     <string name="shortcut_added">Verknüpfung zum Startbildschirm hinzugefügt</string>
     <string name="ad_blocking_disabled">Werbeblocker deaktiviert</string>
     <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
-    <string name="clear_data_message">Alle Browser Daten wie Cookies und Cache werden gelöscht</string>
-    <string name="clear_data_confirmation">Browser Daten gelöscht</string>
+    <string name="clear_data_message">Alle Browser-Daten wie Cookies und Cache werden gelöscht</string>
+    <string name="clear_data_confirmation">Browser-Daten gelöscht</string>
     <string name="chooser_share">URL teilen</string>
     <string name="chooser_open_app">App wählen</string>
     <string name="url_cannot_be_loaded">URL kann nicht geladen werden</string>
     <string name="download_started">Download gestartet</string>
     <string name="storage_permission_needed">Speicherzugriff benötigt um Dateien zu downloaden</string>
+    <string name="add_shortcut_input_hint">Name der Verknüpfung</string>
     <string name="add">Hinzufügen</string>
 </resources>

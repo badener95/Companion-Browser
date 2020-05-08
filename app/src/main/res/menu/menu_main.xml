@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_new_window"
-        android:title="@string/action_new_window" />
-
-    <item
         android:id="@+id/action_share"
         android:title="@string/action_share" />
+
+    <item
+        android:id="@+id/action_new_window"
+        android:title="@string/action_new_window" />
 
     <item
         android:id="@+id/action_add_shortcut"

@@ -6,8 +6,8 @@
     <string name="search_text_input_hint">Enter search term or URL</string>
     <string name="clear_search_text_button">Clear input</string>
     <string name="menu_button">Menu</string>
-    <string name="action_new_window">New window</string>
     <string name="action_share">Share</string>
+    <string name="action_new_window">New window</string>
     <string name="action_add_shortcut">Add shortcut</string>
     <string name="action_toggle_ad_blocking">Ad blocking</string>
     <string name="action_clear_data">Clear browsing data</string>
@@ -23,5 +23,6 @@
     <string name="url_cannot_be_loaded">URL cannot be loaded</string>
     <string name="download_started">Download started</string>
     <string name="storage_permission_needed">Storage access needed to download files</string>
+    <string name="add_shortcut_input_hint">Shortcut name</string>
     <string name="add">Add</string>
 </resources>

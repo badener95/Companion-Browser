@@ -14,24 +14,31 @@
         <WebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/bottomBarShadow"
+    <FrameLayout
+        android:id="@+id/bottomBarContainer"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="?attr/actionBarSize"
-        app:srcCompat="@drawable/bottom_bar_shadow" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
 
-    <include
-        android:id="@+id/bottomBar"
-        layout="@layout/bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_gravity="bottom" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_marginBottom="?attr/actionBarSize"
+            app:srcCompat="@drawable/bottom_bar_shadow" />
+
+        <include
+            layout="@layout/bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="bottom" />
+
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/fullScreenContainer"

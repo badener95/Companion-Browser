@@ -17,7 +17,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -37,20 +39,18 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String startPage = "https://www.google.com/";
 
     private WebView webView;
-    private AppCompatImageView bottomBarShadow;
-    private ConstraintLayout bottomBar;
+    private FrameLayout bottomBarContainer;
     private ImageButton webViewControlButton;
     private ImageButton openDefaultAppButton;
     private TextInputEditText searchTextInput;
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    private String snackbarText;
     private String shortcutTitle;
     private IconCompat shortcutIcon;
 
@@ -91,8 +91,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        bottomBarShadow = findViewById(R.id.bottomBarShadow);
-        bottomBar = findViewById(R.id.bottomBar);
+        bottomBarContainer = findViewById(R.id.bottomBarContainer);
         webViewControlButton = findViewById(R.id.webViewControlButton);
         openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         searchTextInput = findViewById(R.id.searchTextInput);
@@ -220,8 +219,8 @@ public class MainActivity extends AppCompatActivity {
                             getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
                     DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Objects.requireNonNull(downloadManager).enqueue(request);
-                    Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.download_started,
-                            Snackbar.LENGTH_SHORT).show();
+                    snackbarText = getString(R.string.download_started);
+                    showSnackbar();
                 }
             }
         });
@@ -254,8 +253,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onShowCustomView(View view, CustomViewCallback callback) {
                 super.onShowCustomView(view, callback);
-                bottomBarShadow.setVisibility(View.GONE);
-                bottomBar.setVisibility(View.GONE);
+                bottomBarContainer.setVisibility(View.GONE);
                 fullScreen.setVisibility(View.VISIBLE);
                 fullScreen.addView(view);
                 enableFullScreen();
@@ -266,8 +264,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onHideCustomView() {
                 super.onHideCustomView();
-                bottomBarShadow.setVisibility(View.VISIBLE);
-                bottomBar.setVisibility(View.VISIBLE);
+                bottomBarContainer.setVisibility(View.VISIBLE);
                 fullScreen.setVisibility(View.GONE);
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                 int isLightThemeEnabled = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
@@ -326,8 +323,8 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
                     } else {
                         // There is no app
-                        Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.url_cannot_be_loaded,
-                                Snackbar.LENGTH_SHORT).show();
+                        snackbarText = getString(R.string.url_cannot_be_loaded);
+                        showSnackbar();
                     }
                     return true;
                 }
@@ -339,19 +336,13 @@ public class MainActivity extends AppCompatActivity {
     // Show and handle the popup menu
     private void showPopupMenu() {
         PopupMenu popupMenu = new PopupMenu(this, menuButton);
+        popupMenu.setGravity(Gravity.END);
         popupMenu.inflate(R.menu.menu_main);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-
-                    case R.id.action_new_window:
-                        // Open new window
-                        Intent newWindowIntent = new Intent(MainActivity.this, MainActivity.class);
-                        newWindowIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                        startActivity(newWindowIntent);
-                        return true;
 
                     case R.id.action_share:
                         // Share URL
@@ -361,13 +352,20 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(Intent.createChooser(shareIntent, getString(R.string.chooser_share)));
                         return true;
 
+                    case R.id.action_new_window:
+                        // Open new window
+                        Intent newWindowIntent = new Intent(MainActivity.this, MainActivity.class);
+                        newWindowIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                        startActivity(newWindowIntent);
+                        return true;
+
                     case R.id.action_add_shortcut:
                         // Pin website shortcut to launcher if supported
                         if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
                             pinShortcut();
                         } else {
-                            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcuts_not_supported,
-                                    Snackbar.LENGTH_SHORT).show();
+                            snackbarText = getString(R.string.shortcuts_not_supported);
+                            showSnackbar();
                         }
                         return true;
 
@@ -377,9 +375,8 @@ public class MainActivity extends AppCompatActivity {
                         editor = sharedPreferences.edit();
                         editor.putBoolean("ad_blocking", isAdBlockingEnabled);
                         editor.apply();
-                        Snackbar.make(findViewById(R.id.coordinatorLayout), (isAdBlockingEnabled ?
-                                        R.string.ad_blocking_enabled : R.string.ad_blocking_disabled),
-                                Snackbar.LENGTH_SHORT).show();
+                        snackbarText = getString(isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled);
+                        showSnackbar();
                         item.setChecked(isAdBlockingEnabled);
                         webView.reload();
                         return true;
@@ -405,16 +402,13 @@ public class MainActivity extends AppCompatActivity {
     // Pin website shortcut to launcher
     private void pinShortcut() {
         // Ask for the shortcut title first
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        TextInputLayout textInputLayout = new TextInputLayout(this);
-        final TextInputEditText textInput = new TextInputEditText(this);
-        textInput.setText(webView.getTitle());
-        textInput.setSingleLine(true);
-        textInputLayout.setPadding(getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0,
-                getResources().getDimensionPixelOffset(R.dimen.alert_dialog_padding), 0);
-        textInputLayout.addView(textInput);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setBackground(getDrawable(R.drawable.background_round_corners));
         builder.setTitle(R.string.action_add_shortcut);
-        builder.setView(textInputLayout);
+        @SuppressLint("InflateParams") View viewInflated = LayoutInflater.from(this).inflate(R.layout.add_shortcut_layout, null);
+        final TextInputEditText textInput = viewInflated.findViewById(R.id.TextInput);
+        textInput.setText(webView.getTitle());
+        builder.setView(viewInflated);
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -434,9 +428,10 @@ public class MainActivity extends AppCompatActivity {
                         .setIntent(pinShortcutIntent)
                         .build();
                 ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                    Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.shortcut_added,
-                            Snackbar.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    snackbarText = getString(R.string.shortcut_added);
+                    showSnackbar();
+                }
             }
         });
         // Cancel creating shortcut
@@ -453,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
         // Draw background
         Bitmap icon = Bitmap.createBitmap(432, 432, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(icon);
-        canvas.drawColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+        canvas.drawColor(ContextCompat.getColor(getApplicationContext(), R.color.colorShortcuts));
         // Get the first one or two characters of the shortcut title
         String iconText;
         iconText = (shortcutTitle.length() >= 2 ? shortcutTitle.substring(0, 2) : shortcutTitle.substring(0, 1));
@@ -472,7 +467,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Clear browsing data
     private void clearBrowsingData() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
+                .setBackground(getDrawable(R.drawable.background_round_corners))
                 .setTitle(R.string.action_clear_data)
                 .setIcon(R.drawable.ic_delete_outline)
                 .setMessage(R.string.clear_data_message)
@@ -483,8 +479,8 @@ public class MainActivity extends AppCompatActivity {
                         CookieManager.getInstance().removeAllCookies(null);
                         WebStorage.getInstance().deleteAllData();
                         webView.loadUrl(startPage);
-                        Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.clear_data_confirmation,
-                                Snackbar.LENGTH_SHORT).show();
+                        snackbarText = getString(R.string.clear_data_confirmation);
+                        showSnackbar();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -540,11 +536,21 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else {
             // Ask for permission because it is not granted yet
-            Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.storage_permission_needed,
-                    Snackbar.LENGTH_SHORT).show();
+            snackbarText = getString(R.string.storage_permission_needed);
+            showSnackbar();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             return false;
         }
+    }
+
+    // Show snackbar with custom background and text color
+    private void showSnackbar() {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), snackbarText, Snackbar.LENGTH_SHORT);
+        View view = snackbar.getView();
+        DrawableCompat.setTint(view.getBackground(), ContextCompat.getColor(this, R.color.colorPrimaryVariant));
+        TextView textView = view.findViewById(R.id.snackbar_text);
+        textView.setTextColor(ContextCompat.getColor(this, R.color.colorText));
+        snackbar.show();
     }
 
     // Prevent the back button from closing the app
