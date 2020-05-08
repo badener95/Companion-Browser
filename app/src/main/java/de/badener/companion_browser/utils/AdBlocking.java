@@ -1,6 +1,3 @@
-// Ad blocking based on this:
-// https://github.com/CarbonROM/android_packages_apps_Quarks/commit/a9abee9694c8dd239cda403bd99ea9e0922b90b5
-
 package de.badener.companion_browser.utils;
 
 import android.content.Context;

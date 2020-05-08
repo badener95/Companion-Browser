@@ -165,17 +165,17 @@ public class MainActivity extends AppCompatActivity {
                     if (Objects.requireNonNull(searchTextInput.getText()).toString().trim().isEmpty()) {
                         searchTextInput.setText(webView.getUrl());
                     } else {
-                        String text = searchTextInput.getText().toString().trim();
+                        String input = searchTextInput.getText().toString().trim();
                         String url;
-                        if (URLUtil.isValidUrl(text)) {
+                        if (URLUtil.isValidUrl(input)) {
                             // Input is a valid URL
-                            url = text;
-                        } else if (text.contains(" ") || !text.contains(".")) {
+                            url = input;
+                        } else if (input.contains(" ") || !input.contains(".")) {
                             // Input is obviously no URL, start Google search
-                            url = "https://www.google.com/search?q=" + text;
+                            url = "https://www.google.com/search?q=" + input;
                         } else {
                             // Try to guess URL
-                            url = URLUtil.guessUrl(text);
+                            url = URLUtil.guessUrl(input);
                         }
                         webView.loadUrl(url);
                     }
@@ -212,6 +212,9 @@ public class MainActivity extends AppCompatActivity {
                 // Check if storage permission is granted and start download if applicable
                 if (isStoragePermissionGranted()) {
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                        request.allowScanningByMediaScanner();
+                    }
                     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                     String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
@@ -238,14 +241,17 @@ public class MainActivity extends AppCompatActivity {
             // Update the progress bar and other ui elements according to WebView progress
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                progressBar.setProgress(newProgress);
-                if (!searchTextInput.hasFocus()) searchTextInput.setText(webView.getUrl());
-                if (newProgress == 100) {
-                    progressBar.setVisibility(View.GONE);
-                    webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_reload));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    progressBar.setProgress(newProgress, true);
                 } else {
+                    progressBar.setProgress(newProgress);
+                }
+                if (newProgress < 100) {
                     progressBar.setVisibility(View.VISIBLE);
                     webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_reload));
                 }
             }
 
@@ -285,8 +291,7 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebViewClient(new WebViewClient() {
 
-            // Ad blocking based on this:
-            // https://github.com/CarbonROM/android_packages_apps_Quarks/commit/a9abee9694c8dd239cda403bd99ea9e0922b90b5
+            // Ad blocking feature
             private final Map<String, Boolean> loadedUrls = new HashMap<>();
 
             @Override
@@ -305,10 +310,12 @@ public class MainActivity extends AppCompatActivity {
                 return super.shouldInterceptRequest(view, request);
             }
 
-            // Check for default apps on page started loading
+            // Update the URL displayed in the bottom bar and check for default apps
             @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+                if (!searchTextInput.hasFocus()) searchTextInput.setText(webView.getUrl());
                 checkDefaultApps();
+                super.doUpdateVisitedHistory(view, url, isReload);
             }
 
             // Handle external links
