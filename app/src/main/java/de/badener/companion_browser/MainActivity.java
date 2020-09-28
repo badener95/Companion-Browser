@@ -17,21 +17,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -41,11 +38,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -63,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String startPage = "https://www.google.com/";
 
+    private CoordinatorLayout coordinatorLayout;
     private WebView webView;
     private FrameLayout bottomBarContainer;
     private ImageButton webViewControlButton;
-    private ImageButton openDefaultAppButton;
     private TextInputEditText searchTextInput;
     private ImageButton clearSearchTextButton;
     private ImageButton menuButton;
@@ -76,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private String snackbarText;
     private String shortcutTitle;
     private IconCompat shortcutIcon;
 
@@ -90,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        coordinatorLayout = findViewById(R.id.coordinatorLayout);
         webView = findViewById(R.id.webView);
         bottomBarContainer = findViewById(R.id.bottomBarContainer);
         webViewControlButton = findViewById(R.id.webViewControlButton);
-        openDefaultAppButton = findViewById(R.id.openDefaultAppButton);
         searchTextInput = findViewById(R.id.searchTextInput);
         clearSearchTextButton = findViewById(R.id.clearSearchTextButton);
         menuButton = findViewById(R.id.menuButton);
@@ -102,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Change WebView settings
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setGeolocationEnabled(false);
@@ -110,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
-        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
 
         // Initialize ad blocking
         AdBlocking.init(this);
@@ -129,27 +123,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle "open default app button" in the search field
-        openDefaultAppButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
-                startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
-            }
-        });
-
         // Handle focus changes of the search field
         searchTextInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (hasFocus) {
                     webViewControlButton.setVisibility(View.GONE);
-                    openDefaultAppButton.setVisibility(View.GONE);
                     clearSearchTextButton.setVisibility(View.VISIBLE);
                     menuButton.setVisibility(View.GONE);
                 } else {
                     webViewControlButton.setVisibility(View.VISIBLE);
-                    if (isDefaultAppAvailable) openDefaultAppButton.setVisibility(View.VISIBLE);
                     searchTextInput.setText(webView.getUrl());
                     clearSearchTextButton.setVisibility(View.GONE);
                     menuButton.setVisibility(View.VISIBLE);
@@ -222,8 +205,8 @@ public class MainActivity extends AppCompatActivity {
                             getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
                     DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Objects.requireNonNull(downloadManager).enqueue(request);
-                    snackbarText = getString(R.string.download_started);
-                    showSnackbar();
+                    Snackbar.make(coordinatorLayout, R.string.download_started, Snackbar.LENGTH_SHORT)
+                            .show();
                 }
             }
         });
@@ -248,10 +231,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (newProgress < 100) {
                     progressBar.setVisibility(View.VISIBLE);
-                    webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_cancel));
+                    webViewControlButton.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_cancel));
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    webViewControlButton.setImageDrawable(getDrawable(R.drawable.ic_reload));
+                    webViewControlButton.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_reload));
                 }
             }
 
@@ -310,11 +293,10 @@ public class MainActivity extends AppCompatActivity {
                 return super.shouldInterceptRequest(view, request);
             }
 
-            // Update the URL displayed in the bottom bar and check for default apps
+            // Update the URL displayed in the bottom bar
             @Override
             public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
                 if (!searchTextInput.hasFocus()) searchTextInput.setText(webView.getUrl());
-                checkDefaultApps();
                 super.doUpdateVisitedHistory(view, url, isReload);
             }
 
@@ -330,8 +312,8 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
                     } else {
                         // There is no app
-                        snackbarText = getString(R.string.url_cannot_be_loaded);
-                        showSnackbar();
+                        Snackbar.make(coordinatorLayout, R.string.url_cannot_be_loaded, Snackbar.LENGTH_SHORT)
+                                .show();
                     }
                     return true;
                 }
@@ -343,8 +325,9 @@ public class MainActivity extends AppCompatActivity {
     // Show and handle the popup menu
     private void showPopupMenu() {
         PopupMenu popupMenu = new PopupMenu(this, menuButton);
-        popupMenu.setGravity(Gravity.END);
         popupMenu.inflate(R.menu.menu_main);
+        checkDefaultApps();
+        popupMenu.getMenu().findItem(R.id.action_open_with_app).setEnabled(isDefaultAppAvailable);
         popupMenu.getMenu().findItem(R.id.action_toggle_ad_blocking).setChecked(isAdBlockingEnabled);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -366,13 +349,19 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(newWindowIntent);
                         return true;
 
+                    case R.id.action_open_with_app:
+                        // Open current link in default app
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webView.getUrl()));
+                        startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
+                        return true;
+
                     case R.id.action_add_shortcut:
                         // Pin website shortcut to launcher if supported
                         if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
                             pinShortcut();
                         } else {
-                            snackbarText = getString(R.string.shortcuts_not_supported);
-                            showSnackbar();
+                            Snackbar.make(coordinatorLayout, R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT)
+                                    .show();
                         }
                         return true;
 
@@ -382,15 +371,11 @@ public class MainActivity extends AppCompatActivity {
                         editor = sharedPreferences.edit();
                         editor.putBoolean("ad_blocking", isAdBlockingEnabled);
                         editor.apply();
-                        snackbarText = getString(isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled);
-                        showSnackbar();
+                        Snackbar.make(coordinatorLayout, (isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled),
+                                Snackbar.LENGTH_SHORT)
+                                .show();
                         item.setChecked(isAdBlockingEnabled);
                         webView.reload();
-                        return true;
-
-                    case R.id.action_clear_data:
-                        // Clear browsing data
-                        clearBrowsingData();
                         return true;
 
                     case R.id.action_close_window:
@@ -410,9 +395,8 @@ public class MainActivity extends AppCompatActivity {
     private void pinShortcut() {
         // Ask for the shortcut title first
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setBackground(getDrawable(R.drawable.background_round_corners));
         builder.setTitle(R.string.action_add_shortcut);
-        @SuppressLint("InflateParams") View viewInflated = LayoutInflater.from(this).inflate(R.layout.add_shortcut_layout, null);
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.add_shortcut_layout, null);
         final TextInputEditText textInput = viewInflated.findViewById(R.id.TextInput);
         textInput.setText(webView.getTitle());
         builder.setView(viewInflated);
@@ -436,8 +420,8 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    snackbarText = getString(R.string.shortcut_added);
-                    showSnackbar();
+                    Snackbar.make(coordinatorLayout, R.string.shortcut_added, Snackbar.LENGTH_SHORT)
+                            .show();
                 }
             }
         });
@@ -472,33 +456,6 @@ public class MainActivity extends AppCompatActivity {
         shortcutIcon = IconCompat.createWithAdaptiveBitmap(icon);
     }
 
-    // Clear browsing data
-    private void clearBrowsingData() {
-        new MaterialAlertDialogBuilder(this)
-                .setBackground(getDrawable(R.drawable.background_round_corners))
-                .setTitle(R.string.action_clear_data)
-                .setIcon(R.drawable.ic_delete_outline)
-                .setMessage(R.string.clear_data_message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        webView.clearCache(true);
-                        CookieManager.getInstance().removeAllCookies(null);
-                        WebStorage.getInstance().deleteAllData();
-                        webView.loadUrl(startPage);
-                        snackbarText = getString(R.string.clear_data_confirmation);
-                        showSnackbar();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .show();
-    }
-
     // Check if there is a default app to open the current link
     private void checkDefaultApps() {
         String packageName = "de.badener.companion_browser";
@@ -508,13 +465,7 @@ public class MainActivity extends AppCompatActivity {
         for (ResolveInfo info : list) {
             packageName = info.activityInfo.packageName;
         }
-        if (packageName.equals("de.badener.companion_browser")) {
-            isDefaultAppAvailable = false;
-            openDefaultAppButton.setVisibility(View.GONE);
-        } else {
-            isDefaultAppAvailable = true;
-            openDefaultAppButton.setVisibility(View.VISIBLE);
-        }
+        isDefaultAppAvailable = !packageName.equals("de.badener.companion_browser");
     }
 
     // Restore fullscreen after losing and gaining focus
@@ -543,21 +494,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else {
             // Ask for permission because it is not granted yet
-            snackbarText = getString(R.string.storage_permission_needed);
-            showSnackbar();
+            Snackbar.make(coordinatorLayout, R.string.storage_permission_needed, Snackbar.LENGTH_SHORT)
+                    .show();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             return false;
         }
-    }
-
-    // Show snackbar with custom background and text color
-    private void showSnackbar() {
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), snackbarText, Snackbar.LENGTH_SHORT);
-        View view = snackbar.getView();
-        DrawableCompat.setTint(view.getBackground(), ContextCompat.getColor(this, R.color.colorPrimaryVariant));
-        TextView textView = view.findViewById(R.id.snackbar_text);
-        textView.setTextColor(ContextCompat.getColor(this, R.color.colorText));
-        snackbar.show();
     }
 
     // Prevent the back button from closing the app

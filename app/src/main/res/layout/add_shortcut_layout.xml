@@ -21,7 +21,8 @@
             android:inputType="textAutoComplete"
             android:requiresFadingEdge="horizontal"
             android:singleLine="true"
-            android:text="@string/app_name" />
+            android:text="@string/app_name"
+            android:textColor="?android:attr/textColorPrimary" />
 
     </com.google.android.material.textfield.TextInputLayout>
 </FrameLayout>

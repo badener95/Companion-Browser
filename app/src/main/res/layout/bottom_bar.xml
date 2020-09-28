@@ -33,17 +33,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/ic_reload" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/openDefaultAppButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/open_default_app_button"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/webViewControlButton"
-                app:srcCompat="@drawable/ic_open_in_app" />
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/searchTextInput"
                 android:layout_width="0dp"
@@ -62,7 +51,7 @@
                 android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/clearSearchTextButton"
-                app:layout_constraintStart_toEndOf="@+id/openDefaultAppButton" />
+                app:layout_constraintStart_toEndOf="@+id/webViewControlButton" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/clearSearchTextButton"

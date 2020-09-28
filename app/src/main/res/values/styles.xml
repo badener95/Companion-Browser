@@ -6,14 +6,6 @@
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">@bool/is_not_night_mode</item>
-        <item name="popupMenuStyle">@style/PopupMenu</item>
-    </style>
-
-    <style name="PopupMenu" parent="ThemeOverlay.MaterialComponents">
-        <item name="android:popupBackground">@drawable/background_round_corners</item>
-        <item name="android:popupElevation">8dp</item>
-        <item name="android:dropDownHorizontalOffset">-4dp</item>
-        <item name="android:dropDownVerticalOffset">16dp</item>
     </style>
 
 </resources>

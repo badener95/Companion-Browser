@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="webview_control_button">Neu laden/Laden stoppen</string>
-    <string name="open_default_app_button">In Standard-App öffnen</string>
     <string name="search_text_input_hint">Suchbegriff oder URL eingeben</string>
     <string name="clear_search_text_button">Eingabe löschen</string>
     <string name="menu_button">Menü</string>
     <string name="action_share">Teilen</string>
     <string name="action_new_window">Neues Fenster</string>
+    <string name="action_open_with_app">In Standard-App öffnen</string>
     <string name="action_add_shortcut">Verknüpfung hinzufügen</string>
     <string name="action_toggle_ad_blocking">Werbeblocker</string>
-    <string name="action_clear_data">Browser-Daten löschen</string>
     <string name="action_close_window">Fenster schließen</string>
     <string name="shortcuts_not_supported">Dein Launcher unterstützt keine Verknüpfungen</string>
     <string name="shortcut_added">Verknüpfung zum Startbildschirm hinzugefügt</string>
     <string name="ad_blocking_disabled">Werbeblocker deaktiviert</string>
     <string name="ad_blocking_enabled">Werbeblocker aktiviert</string>
-    <string name="clear_data_message">Alle Browser-Daten wie Cookies und Cache werden gelöscht</string>
-    <string name="clear_data_confirmation">Browser-Daten gelöscht</string>
     <string name="chooser_share">URL teilen</string>
     <string name="chooser_open_app">App wählen</string>
     <string name="url_cannot_be_loaded">URL kann nicht geladen werden</string>
