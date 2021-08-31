@@ -6,6 +6,8 @@
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">@bool/is_not_night_mode</item>
+        <item name="android:windowLightNavigationBar">@bool/is_not_night_mode</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
     </style>
 
 </resources>
