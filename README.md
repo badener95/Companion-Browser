@@ -4,8 +4,9 @@ Lightweight and good looking simple browser to be used along side a more sophist
 ## Features
 * UI at the bottom for better reachability
 * Ad blocking
-* Automatic day/night theme
-* Supports adding shortcuts to the launcher
+* Automatic or manual day/night theme, including the web content
+* Launcher shortcuts
+* Custom start page
 
 ## Downloads
 Downloads are available from [GitHub](https://github.com/badener95/Companion-Browser/releases/latest)
@@ -13,4 +14,4 @@ Downloads are available from [GitHub](https://github.com/badener95/Companion-Bro
 ## References
 The code for the ad blocking feature is based on this: https://github.com/AmniX/AdBlockedWebView-Android
 
-The host list for ad blocking: https://pgl.yoyo.org/adservers/serverlist.php?hostformat=nohtml&showintro=0
+The host list for ad blocking by Peter Lowe: https://pgl.yoyo.org/adservers/serverlist.php?hostformat=nohtml&showintro=0
