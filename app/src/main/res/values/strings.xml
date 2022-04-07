@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Companion Browser</string>
-    <string name="webview_control_button">Reload/stop loading</string>
     <string name="search_text_input_hint">Enter search term or URL</string>
     <string name="clear_search_text_button">Clear input</string>
     <string name="menu_button">Menu</string>
+    <string name="action_reload">Reload website</string>
     <string name="action_share">Share</string>
     <string name="action_new_window">New window</string>
     <string name="action_open_with_app">Open in default app</string>

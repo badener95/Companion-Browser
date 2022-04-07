@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/colorPrimary"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
@@ -13,25 +12,16 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
-        app:cardBackgroundColor="@color/colorPrimaryVariant"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
+        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        app:cardCornerRadius="24dp"
         app:layout_constraintEnd_toStartOf="@+id/menuButton"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeWidth="0dp"
+        tools:ignore="PrivateResource">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/webViewControlButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/webview_control_button"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_reload" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/searchTextInput"
@@ -39,19 +29,20 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:clickable="true"
+                android:fillColor="?attr/colorOnSecondaryContainer"
                 android:focusable="true"
                 android:hint="@string/search_text_input_hint"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
                 android:requiresFadingEdge="horizontal"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textColor="?android:attr/textColorPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/clearSearchTextButton"
-                app:layout_constraintStart_toEndOf="@+id/webViewControlButton" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="PrivateResource" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/clearSearchTextButton"
@@ -78,12 +69,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_more" />
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="4dp"
+        android:max="100"
         android:progress="50"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:indicatorColor="?attr/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:trackCornerRadius="2dp"
+        app:trackThickness="4dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/action_reload"
+        android:title="@string/action_reload" />
+
+    <item
         android:id="@+id/action_share"
         android:title="@string/action_share" />
 

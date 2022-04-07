@@ -41,6 +41,7 @@ import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -58,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;
     private WebView webView;
     private FrameLayout bottomBarContainer;
-    private ImageButton webViewControlButton;
     private TextInputEditText searchTextInput;
     private ImageButton clearSearchTextButton;
     private ImageButton menuButton;
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyIfAvailable(this);
         sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         nightModePreference = sharedPreferences.getInt("night_mode", -1);
         switch (nightModePreference) {
@@ -100,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         coordinatorLayout = findViewById(R.id.coordinatorLayout);
         webView = findViewById(R.id.webView);
         bottomBarContainer = findViewById(R.id.bottomBarContainer);
-        webViewControlButton = findViewById(R.id.webViewControlButton);
         searchTextInput = findViewById(R.id.searchTextInput);
         clearSearchTextButton = findViewById(R.id.clearSearchTextButton);
         menuButton = findViewById(R.id.menuButton);
@@ -129,23 +129,12 @@ public class MainActivity extends AppCompatActivity {
         AdBlocking.init(this);
         isAdBlockingEnabled = sharedPreferences.getBoolean("ad_blocking", false);
 
-        // Handle "WebView control button" in the search field
-        webViewControlButton.setOnClickListener(view -> {
-            if (webView.getProgress() == 100) {
-                webView.reload();
-            } else {
-                webView.stopLoading();
-            }
-        });
-
         // Handle focus changes of the search field
         searchTextInput.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
-                webViewControlButton.setVisibility(View.GONE);
                 clearSearchTextButton.setVisibility(View.VISIBLE);
                 menuButton.setVisibility(View.GONE);
             } else {
-                webViewControlButton.setVisibility(View.VISIBLE);
                 searchTextInput.setText(webView.getUrl());
                 clearSearchTextButton.setVisibility(View.GONE);
                 menuButton.setVisibility(View.VISIBLE);
@@ -210,16 +199,14 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebChromeClient(new WebChromeClient() {
 
-            // Update the progress bar and other ui elements according to WebView progress
+            // Update the progress bar
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 progressBar.setProgress(newProgress, true);
                 if (newProgress < 100) {
                     progressBar.setVisibility(View.VISIBLE);
-                    webViewControlButton.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_cancel));
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    webViewControlButton.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_reload));
                 }
             }
 
@@ -312,7 +299,11 @@ public class MainActivity extends AppCompatActivity {
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
 
-            if (itemId == R.id.action_share) { // Share URL
+            if (itemId == R.id.action_reload) { // Reload website
+                webView.reload();
+                return true;
+
+            } else if (itemId == R.id.action_share) { // Share URL
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
