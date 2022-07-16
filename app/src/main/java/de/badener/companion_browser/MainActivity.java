@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DynamicColors.applyIfAvailable(this);
+        DynamicColors.applyToActivityIfAvailable(this);
         sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         nightModePreference = sharedPreferences.getInt("night_mode", -1);
         switch (nightModePreference) {
