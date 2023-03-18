@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "de.badener.companion_browser"
         minSdkVersion 29
-        targetSdkVersion 31
-        versionCode 9
-        versionName "3.1"
+        targetSdkVersion 33
+        versionCode 10
+        versionName "3.2"
         resConfigs 'en', 'de'
     }
 
@@ -19,6 +19,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'de.badener.companion_browser'
 
     applicationVariants.all {
         variant ->
@@ -30,7 +31,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
 }

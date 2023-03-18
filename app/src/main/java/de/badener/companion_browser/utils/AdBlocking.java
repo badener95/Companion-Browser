@@ -62,8 +62,7 @@ public class AdBlocking {
             return false;
         }
         int index = host.indexOf('.');
-        return index >= 0 && (AD_HOSTS.contains(host) ||
-                index + 1 < host.length() && isAdHost(host.substring(index + 1)));
+        return index >= 0 && (AD_HOSTS.contains(host) || index + 1 < host.length() && isAdHost(host.substring(index + 1)));
     }
 
     public static WebResourceResponse createEmptyResource() {

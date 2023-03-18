@@ -181,8 +181,7 @@ public class MainActivity extends AppCompatActivity {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-            request.setMimeType(MimeTypeMap.getSingleton().
-                    getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
+            request.setMimeType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url)));
             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Objects.requireNonNull(downloadManager).enqueue(request);
             Snackbar.make(coordinatorLayout, R.string.download_started, Snackbar.LENGTH_SHORT).show();
@@ -232,8 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isLightThemeEnabled == Configuration.UI_MODE_NIGHT_NO) {
                     // Light theme is enabled, restore light status bar and nav bar
                     View decorView = getWindow().getDecorView();
-                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR |
-                            View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
                 }
                 isFullScreen = false;
             }
@@ -279,8 +277,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(Intent.createChooser(intent, getString(R.string.chooser_open_app)));
                     } else {
                         // There is no app
-                        Snackbar.make(coordinatorLayout, R.string.url_cannot_be_loaded, Snackbar.LENGTH_SHORT)
-                                .show();
+                        Snackbar.make(coordinatorLayout, R.string.url_cannot_be_loaded, Snackbar.LENGTH_SHORT).show();
                     }
                     return true;
                 }
@@ -326,9 +323,7 @@ public class MainActivity extends AppCompatActivity {
                 editor = sharedPreferences.edit();
                 editor.putBoolean("ad_blocking", isAdBlockingEnabled);
                 editor.apply();
-                Snackbar.make(coordinatorLayout, (isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled),
-                        Snackbar.LENGTH_SHORT)
-                        .show();
+                Snackbar.make(coordinatorLayout, (isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled), Snackbar.LENGTH_SHORT).show();
                 item.setChecked(isAdBlockingEnabled);
                 webView.reload();
                 return true;
@@ -337,8 +332,7 @@ public class MainActivity extends AppCompatActivity {
                 if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
                     pinShortcut();
                 } else {
-                    Snackbar.make(coordinatorLayout, R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT)
-                            .show();
+                    Snackbar.make(coordinatorLayout, R.string.shortcuts_not_supported, Snackbar.LENGTH_SHORT).show();
                 }
                 return true;
 
@@ -420,20 +414,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the title for the shortcut
         builder.setPositiveButton(R.string.add, (dialogInterface, i) -> {
-            shortcutTitle = (Objects.requireNonNull(textInput.getText()).toString().trim().isEmpty() ?
-                    webView.getTitle() : textInput.getText().toString().trim());
+            shortcutTitle = (Objects.requireNonNull(textInput.getText()).toString().trim().isEmpty() ? webView.getTitle() : textInput.getText().toString().trim());
             // Create the icon for the shortcut
             createShortcutIcon();
             // Create the shortcut
             Intent pinShortcutIntent = new Intent(MainActivity.this, MainActivity.class);
             pinShortcutIntent.setData(Uri.parse(webView.getUrl()));
             pinShortcutIntent.setAction(Intent.ACTION_MAIN);
-            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this, shortcutTitle)
-                    .setShortLabel(shortcutTitle)
-                    .setLongLabel(shortcutTitle)
-                    .setIcon(shortcutIcon)
-                    .setIntent(pinShortcutIntent)
-                    .build();
+            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(MainActivity.this, shortcutTitle).setShortLabel(shortcutTitle).setLongLabel(shortcutTitle).setIcon(shortcutIcon).setIntent(pinShortcutIntent).build();
             ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcutInfo, null);
         });
         // Cancel creating shortcut
@@ -457,8 +445,7 @@ public class MainActivity extends AppCompatActivity {
         paintText.setTextSize(128);
         paintText.setFakeBoldText(true);
         paintText.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(iconText, canvas.getWidth() / 2f,
-                canvas.getHeight() / 2f - (paintText.descent() + paintText.ascent()) / 2f, paintText);
+        canvas.drawText(iconText, canvas.getWidth() / 2f, canvas.getHeight() / 2f - (paintText.descent() + paintText.ascent()) / 2f, paintText);
         // Create icon
         shortcutIcon = IconCompat.createWithAdaptiveBitmap(icon);
     }
@@ -485,8 +472,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get custom URL from text input and save it
         builder.setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
-            startPage = (Objects.requireNonNull(textInput.getText()).toString().trim().isEmpty() ?
-                    startPage : textInput.getText().toString().trim());
+            startPage = (Objects.requireNonNull(textInput.getText()).toString().trim().isEmpty() ? startPage : textInput.getText().toString().trim());
             editor = sharedPreferences.edit();
             editor.putString("start_page", startPage);
             editor.apply();
@@ -500,19 +486,13 @@ public class MainActivity extends AppCompatActivity {
 
     // Clear browsing data
     private void clearBrowsingData() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.action_clear_data)
-                .setIcon(R.drawable.ic_delete_outline)
-                .setMessage(R.string.clear_data_message)
-                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
-                    webView.clearCache(true);
-                    CookieManager.getInstance().removeAllCookies(null);
-                    WebStorage.getInstance().deleteAllData();
-                    webView.loadUrl(startPage);
-                    Snackbar.make(coordinatorLayout, R.string.clear_data_confirmation, Snackbar.LENGTH_SHORT).show();
-                })
-                .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
-                .show();
+        new MaterialAlertDialogBuilder(this).setTitle(R.string.action_clear_data).setIcon(R.drawable.ic_delete_outline).setMessage(R.string.clear_data_message).setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+            webView.clearCache(true);
+            CookieManager.getInstance().removeAllCookies(null);
+            WebStorage.getInstance().deleteAllData();
+            webView.loadUrl(startPage);
+            Snackbar.make(coordinatorLayout, R.string.clear_data_confirmation, Snackbar.LENGTH_SHORT).show();
+        }).setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss()).show();
     }
 
     // Restore fullscreen after losing and gaining focus
@@ -525,12 +505,7 @@ public class MainActivity extends AppCompatActivity {
     // Hide status bar and nav bar when entering fullscreen
     private void enableFullScreen() {
         View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
     // Prevent the back button from closing the app
