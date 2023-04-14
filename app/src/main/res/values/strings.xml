@@ -15,7 +15,6 @@
     <string name="action_night_mode_off">Light</string>
     <string name="action_night_mode_on">Dark</string>
     <string name="action_night_mode_auto">System default</string>
-    <string name="action_enable_dark_web_content">Apply theme to websites</string>
     <string name="action_set_start_page">Set custom start page</string>
     <string name="action_clear_data">Clear browsing data</string>
     <string name="action_close_window">Close window</string>

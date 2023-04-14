@@ -24,7 +24,6 @@ import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -68,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private boolean isDarkWebContentEnabled;
     private boolean isAdBlockingEnabled;
     private boolean isDefaultAppAvailable;
     private boolean isFullScreen;
@@ -116,14 +114,6 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
-        // Enable dark mode for WebView
-        isDarkWebContentEnabled = sharedPreferences.getBoolean("dark_web_content", false);
-        int isLightThemeEnabled = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (isLightThemeEnabled == Configuration.UI_MODE_NIGHT_YES && isDarkWebContentEnabled) {
-            webView.getSettings().setForceDark(WebSettings.FORCE_DARK_ON);
-        } else {
-            webView.getSettings().setForceDark(WebSettings.FORCE_DARK_OFF);
-        }
 
         // Initialize ad blocking
         AdBlocking.init(this);
@@ -348,8 +338,6 @@ public class MainActivity extends AppCompatActivity {
                         popupMenu.getMenu().findItem(R.id.action_night_mode_auto).setChecked(true);
                         break;
                 }
-                popupMenu.getMenu().findItem(R.id.action_enabled_dark_web_content).setChecked(isDarkWebContentEnabled);
-                return true;
             } else if (itemId == R.id.action_night_mode_off) {
                 nightModePreference = 1;
                 setNightModePreference();
@@ -361,13 +349,6 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.action_night_mode_auto) {
                 nightModePreference = -1;
                 setNightModePreference();
-                return true;
-            } else if (itemId == R.id.action_enabled_dark_web_content) {
-                isDarkWebContentEnabled = !isDarkWebContentEnabled;
-                editor = sharedPreferences.edit();
-                editor.putBoolean("dark_web_content", isDarkWebContentEnabled);
-                editor.apply();
-                recreate();
                 return true;
 
             } else if (itemId == R.id.action_set_start_page) { // Set custom start page
