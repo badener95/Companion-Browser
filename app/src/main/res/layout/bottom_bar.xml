@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
-        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        app:cardBackgroundColor="?attr/colorSurfaceVariant"
         app:cardCornerRadius="24dp"
         app:layout_constraintEnd_toStartOf="@+id/menuButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:clickable="true"
-                android:fillColor="?attr/colorOnSecondaryContainer"
+                android:fillColor="?attr/colorOnSurfaceVariant"
                 android:focusable="true"
                 android:hint="@string/search_text_input_hint"
                 android:imeOptions="actionGo"
@@ -72,11 +72,12 @@
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="wrap_content"
         android:max="100"
         android:progress="50"
         app:indicatorColor="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"
+        app:trackColor="?attr/colorSurfaceVariant"
         app:trackCornerRadius="2dp"
         app:trackThickness="4dp" />
 
