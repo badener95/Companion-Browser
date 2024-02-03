@@ -6,6 +6,7 @@ Lightweight and good looking simple browser to be used along side a more sophist
 * Ad blocking
 * Automatic or manual day/night theme, including the web content
 * Launcher shortcuts
+* Choice of search engines
 * Custom start page
 
 ## Downloads

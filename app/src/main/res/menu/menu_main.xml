@@ -54,6 +54,28 @@
                 android:title="@string/action_set_start_page" />
 
             <item
+                android:id="@+id/action_set_search_engine"
+                android:icon="@drawable/ic_screen_search_outline"
+                android:title="@string/action_set_search_engine">
+                <menu>
+                    <group android:checkableBehavior="single">
+                        <item
+                            android:id="@+id/action_set_bing"
+                            android:title="@string/string_action_set_bing" />
+                        <item
+                            android:id="@+id/action_set_duckduckgo"
+                            android:title="@string/string_action_set_duckduckgo" />
+                        <item
+                            android:id="@+id/action_set_google"
+                            android:title="@string/string_action_set_google" />
+                        <item
+                            android:id="@+id/action_set_startpage_search"
+                            android:title="@string/string_action_set_startpage_search" />
+                    </group>
+                </menu>
+            </item>
+
+            <item
                 android:id="@+id/action_clear_data"
                 android:icon="@drawable/ic_delete_outline"
                 android:title="@string/action_clear_data" />

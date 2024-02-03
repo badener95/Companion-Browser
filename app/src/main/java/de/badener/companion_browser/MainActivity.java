@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int nightModePreference;
     private String startPage;
+    private String searchEnginePreference;
     private String shortcutTitle;
     private IconCompat shortcutIcon;
 
@@ -120,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         AdBlocking.init(this);
         isAdBlockingEnabled = sharedPreferences.getBoolean("ad_blocking", false);
 
+        // Read search engine preference
+        searchEnginePreference = sharedPreferences.getString("search_engine", "https://www.startpage.com/do/search?query=");
+
         // Handle focus changes of the search field
         searchTextInput.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
@@ -144,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
                         // Input is a valid URL
                         url = input;
                     } else if (input.contains(" ") || !input.contains(".")) {
-                        // Input is obviously no URL, start Google search
-                        url = "https://www.google.com/search?q=" + input;
+                        // Input is obviously no URL, start web search
+                        url = searchEnginePreference + input;
                     } else {
                         // Try to guess URL
                         url = URLUtil.guessUrl(input);
@@ -179,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Handle intents
-        startPage = sharedPreferences.getString("start_page", "https://www.google.com/");
+        startPage = sharedPreferences.getString("start_page", "https://www.startpage.com/");
         Intent intent = getIntent();
         Uri uri = intent.getData();
         String url;
@@ -356,6 +360,38 @@ public class MainActivity extends AppCompatActivity {
                 setStartPage();
                 return true;
 
+            } else if (itemId == R.id.action_set_search_engine) { // Set search engine preference
+                switch (searchEnginePreference) {
+                    case ("https://www.bing.com/search?q="):
+                        popupMenu.getMenu().findItem(R.id.action_set_bing).setChecked(true);
+                        break;
+                    case ("https://duckduckgo.com/?q="):
+                        popupMenu.getMenu().findItem(R.id.action_set_duckduckgo).setChecked(true);
+                        break;
+                    case ("https://www.google.com/search?q="):
+                        popupMenu.getMenu().findItem(R.id.action_set_google).setChecked(true);
+                        break;
+                    case ("https://www.startpage.com/do/search?query="):
+                        popupMenu.getMenu().findItem(R.id.action_set_startpage_search).setChecked(true);
+                        break;
+                }
+            } else if (itemId == R.id.action_set_bing) {
+                searchEnginePreference = "https://www.bing.com/search?q=";
+                setSearchEnginePreference();
+                return true;
+            } else if (itemId == R.id.action_set_duckduckgo) {
+                searchEnginePreference = "https://duckduckgo.com/?q=";
+                setSearchEnginePreference();
+                return true;
+            } else if (itemId == R.id.action_set_google) {
+                searchEnginePreference = "https://www.google.com/search?q=";
+                setSearchEnginePreference();
+                return true;
+            } else if (itemId == R.id.action_set_startpage_search) {
+                searchEnginePreference = "https://www.startpage.com/do/search?query=";
+                setSearchEnginePreference();
+                return true;
+
             } else if (itemId == R.id.action_clear_data) { // Clear browsing data
                 clearBrowsingData();
                 return true;
@@ -464,6 +500,14 @@ public class MainActivity extends AppCompatActivity {
         // Cancel
         builder.setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
         builder.show();
+    }
+
+    // Save search engine preference
+    private void setSearchEnginePreference() {
+        editor = sharedPreferences.edit();
+        editor.putString("search_engine", searchEnginePreference);
+        editor.apply();
+        Snackbar.make(coordinatorLayout, R.string.settings_saved, Snackbar.LENGTH_SHORT).show();
     }
 
     // Clear browsing data

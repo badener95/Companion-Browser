@@ -16,6 +16,12 @@
     <string name="action_night_mode_on">Dark</string>
     <string name="action_night_mode_auto">System default</string>
     <string name="action_set_start_page">Set custom start page</string>
+    <string name="action_set_search_engine">Search engine</string>
+    <string name="string_action_set_bing">Bing</string>
+    <string name="string_action_set_duckduckgo">DuckDuckGo</string>
+    <string name="string_action_set_google">Google</string>
+    <string name="string_action_set_startpage_search">Startpage</string>
+    <string name="settings_saved">Settings saved</string>
     <string name="action_clear_data">Clear browsing data</string>
     <string name="action_close_window">Close window</string>
     <string name="ad_blocking_disabled">Ad blocking disabled</string>
