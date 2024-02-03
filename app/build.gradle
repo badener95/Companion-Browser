@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
-
     defaultConfig {
         applicationId "de.badener.companion_browser"
+        compileSdk 34
         minSdkVersion 29
-        targetSdkVersion 33
-        versionCode 11
-        versionName "3.3"
-        resConfigs 'en', 'de'
+        targetSdkVersion 34
+        versionCode 12
+        versionName "3.4"
+        resourceConfigurations += ['en', 'de']
     }
 
     buildTypes {
@@ -21,9 +20,9 @@ android {
     }
     namespace 'de.badener.companion_browser'
 
-    applicationVariants.all {
+    applicationVariants.configureEach {
         variant ->
-            variant.outputs.all {
+            variant.outputs.configureEach {
                 outputFileName = "Companion_Browser-${variant.name}-v${versionName}.apk"
             }
     }
@@ -33,5 +32,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.11.0'
 }

@@ -318,8 +318,8 @@ public class MainActivity extends AppCompatActivity {
                 editor = sharedPreferences.edit();
                 editor.putBoolean("ad_blocking", isAdBlockingEnabled);
                 editor.apply();
-                Snackbar.make(coordinatorLayout, (isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled), Snackbar.LENGTH_SHORT).show();
                 item.setChecked(isAdBlockingEnabled);
+                Snackbar.make(coordinatorLayout, (isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled), Snackbar.LENGTH_SHORT).show();
                 webView.reload();
                 return true;
 
@@ -494,7 +494,6 @@ public class MainActivity extends AppCompatActivity {
             editor = sharedPreferences.edit();
             editor.putString("start_page", startPage);
             editor.apply();
-            webView.loadUrl(startPage);
             Snackbar.make(coordinatorLayout, R.string.start_page_saved, Snackbar.LENGTH_SHORT).show();
         });
         // Cancel
@@ -550,6 +549,7 @@ public class MainActivity extends AppCompatActivity {
             webView.goBack();
         } else {
             finishAndRemoveTask();
+            super.onBackPressed();
         }
     }
 }

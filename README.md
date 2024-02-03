@@ -4,7 +4,7 @@ Lightweight and good looking simple browser to be used along side a more sophist
 ## Features
 * UI at the bottom for better reachability
 * Ad blocking
-* Automatic or manual day/night theme, including the web content
+* Automatic or manual light/dark theme
 * Launcher shortcuts
 * Choice of search engines
 * Custom start page

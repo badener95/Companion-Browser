@@ -19,6 +19,7 @@ import java.util.Set;
 
 import de.badener.companion_browser.R;
 
+/** @noinspection deprecation */
 public class AdBlocking {
     private static final int AD_HOSTS_FILE = R.raw.hosts;
     private static final Set<String> AD_HOSTS = new HashSet<>();
