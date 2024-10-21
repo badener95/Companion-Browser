@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         isAdBlockingEnabled = sharedPreferences.getBoolean("ad_blocking", false);
 
         // Read search engine preference
-        searchEnginePreference = sharedPreferences.getString("search_engine", "https://www.startpage.com/do/search?query=");
+        searchEnginePreference = sharedPreferences.getString("search_engine", "https://search.brave.com/search?q=");
 
         // Handle focus changes of the search field
         searchTextInput.setOnFocusChangeListener((view, hasFocus) -> {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Handle intents
-        startPage = sharedPreferences.getString("start_page", "https://www.startpage.com/");
+        startPage = sharedPreferences.getString("start_page", "https://search.brave.com/");
         Intent intent = getIntent();
         Uri uri = intent.getData();
         String url;
@@ -364,6 +364,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (searchEnginePreference) {
                     case ("https://www.bing.com/search?q="):
                         popupMenu.getMenu().findItem(R.id.action_set_bing).setChecked(true);
+                        break;
+                    case ("https://search.brave.com/search?q="):
+                        popupMenu.getMenu().findItem(R.id.action_set_brave).setChecked(true);
                         break;
                     case ("https://duckduckgo.com/?q="):
                         popupMenu.getMenu().findItem(R.id.action_set_duckduckgo).setChecked(true);

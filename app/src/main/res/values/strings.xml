@@ -18,6 +18,7 @@
     <string name="action_set_start_page">Set custom start page</string>
     <string name="action_set_search_engine">Search engine</string>
     <string name="string_action_set_bing">Bing</string>
+    <string name="string_action_set_brave">Brave Search</string>
     <string name="string_action_set_duckduckgo">DuckDuckGo</string>
     <string name="string_action_set_google">Google</string>
     <string name="string_action_set_startpage_search">Startpage</string>

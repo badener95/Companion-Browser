@@ -63,6 +63,9 @@
                             android:id="@+id/action_set_bing"
                             android:title="@string/string_action_set_bing" />
                         <item
+                            android:id="@+id/action_set_brave"
+                            android:title="@string/string_action_set_brave" />
+                        <item
                             android:id="@+id/action_set_duckduckgo"
                             android:title="@string/string_action_set_duckduckgo" />
                         <item
