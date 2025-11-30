@@ -382,6 +382,10 @@ public class MainActivity extends AppCompatActivity {
                 searchEnginePreference = "https://www.bing.com/search?q=";
                 setSearchEnginePreference();
                 return true;
+            } else if (itemId == R.id.action_set_brave) {
+                searchEnginePreference = "https://search.brave.com/search?q=";
+                setSearchEnginePreference();
+                return true;
             } else if (itemId == R.id.action_set_duckduckgo) {
                 searchEnginePreference = "https://duckduckgo.com/?q=";
                 setSearchEnginePreference();
