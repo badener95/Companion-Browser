@@ -32,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.PopupMenu;
@@ -40,6 +41,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -109,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Change WebView settings
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setGeolocationEnabled(false);
         webView.getSettings().setUseWideViewPort(true);
@@ -158,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 searchTextInput.clearFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 return true;
             }
             return false;
@@ -221,12 +224,16 @@ public class MainActivity extends AppCompatActivity {
                 super.onHideCustomView();
                 bottomBarContainer.setVisibility(View.VISIBLE);
                 fullScreen.setVisibility(View.GONE);
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
                 int isLightThemeEnabled = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
                 if (isLightThemeEnabled == Configuration.UI_MODE_NIGHT_NO) {
                     // Light theme is enabled, restore light status bar and nav bar
-                    View decorView = getWindow().getDecorView();
-                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                    windowInsetsController.setAppearanceLightStatusBars(true);
+                    windowInsetsController.setAppearanceLightNavigationBars(true);
+                } else {
+                    windowInsetsController.setAppearanceLightStatusBars(false);
+                    windowInsetsController.setAppearanceLightNavigationBars(false);
                 }
                 isFullScreen = false;
             }
@@ -279,6 +286,20 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        // Prevent the back button from closing the app
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (searchTextInput.hasFocus()) {
+                    searchTextInput.clearFocus();
+                } else if (webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    finishAndRemoveTask();
+                }
+            }
+        });
     }
 
     // Show and handle the popup menu
@@ -315,9 +336,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else if (itemId == R.id.action_toggle_ad_blocking) { // Toggle ad blocking
                 isAdBlockingEnabled = !isAdBlockingEnabled;
-                editor = sharedPreferences.edit();
-                editor.putBoolean("ad_blocking", isAdBlockingEnabled);
-                editor.apply();
+                sharedPreferences.edit().putBoolean("ad_blocking", isAdBlockingEnabled).apply();
                 item.setChecked(isAdBlockingEnabled);
                 Snackbar.make(coordinatorLayout, (isAdBlockingEnabled ? R.string.ad_blocking_enabled : R.string.ad_blocking_disabled), Snackbar.LENGTH_SHORT).show();
                 webView.reload();
@@ -333,26 +352,26 @@ public class MainActivity extends AppCompatActivity {
 
             } else if (itemId == R.id.action_set_night_mode) { // Set night mode preference
                 switch (nightModePreference) {
-                    case (1):
+                    case (AppCompatDelegate.MODE_NIGHT_NO):
                         popupMenu.getMenu().findItem(R.id.action_night_mode_off).setChecked(true);
                         break;
-                    case (2):
+                    case (AppCompatDelegate.MODE_NIGHT_YES):
                         popupMenu.getMenu().findItem(R.id.action_night_mode_on).setChecked(true);
                         break;
-                    case (-1):
+                    case (AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM):
                         popupMenu.getMenu().findItem(R.id.action_night_mode_auto).setChecked(true);
                         break;
                 }
             } else if (itemId == R.id.action_night_mode_off) {
-                nightModePreference = 1;
+                nightModePreference = AppCompatDelegate.MODE_NIGHT_NO;
                 setNightModePreference();
                 return true;
             } else if (itemId == R.id.action_night_mode_on) {
-                nightModePreference = 2;
+                nightModePreference = AppCompatDelegate.MODE_NIGHT_YES;
                 setNightModePreference();
                 return true;
             } else if (itemId == R.id.action_night_mode_auto) {
-                nightModePreference = -1;
+                nightModePreference = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
                 setNightModePreference();
                 return true;
 
@@ -536,8 +555,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Hide status bar and nav bar when entering fullscreen
     private void enableFullScreen() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
     }
 
     // Enable recents URL sharing (Google Pixel devices only)
@@ -545,18 +565,5 @@ public class MainActivity extends AppCompatActivity {
     public void onProvideAssistContent(AssistContent outContent) {
         super.onProvideAssistContent(outContent);
         outContent.setWebUri(Uri.parse(webView.getUrl()));
-    }
-
-    // Prevent the back button from closing the app
-    @Override
-    public void onBackPressed() {
-        if (searchTextInput.hasFocus()) {
-            searchTextInput.clearFocus();
-        } else if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            finishAndRemoveTask();
-            super.onBackPressed();
-        }
     }
 }
